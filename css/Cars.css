@@ -1,0 +1,1108 @@
+body{
+    margin: 0 auto;
+    padding: 0;
+    width: 100%;
+    box-sizing: border-box;
+}
+*{
+    flex-shrink: 0;
+}
+/* 头部导航栏-整体为flex布局 */
+header{
+    height: 50px;
+    background-image: url(/img/深灰色矩形.png);
+    display: flex;
+    flex-direction: row;
+}
+/* 右边导航 */
+.right{
+    flex-shrink: 0;
+    display:flex;
+    margin-left: 150px;
+    justify-content:space-between;
+}
+/* 右边导航组件均匀分布，并上下居中 ，左右间隔20px*/
+.right *{
+    margin: 0 20px;
+    align-self:center;
+}
+/* 单独设置国旗和语言选择左右无间隔 */
+#flag *{
+    padding: 0px;
+    margin: 0px;
+}
+/* 将所有导航栏内容向右边移动 */
+#solid{
+    margin-left:7%;
+}
+/* 给文字设置颜色等样式 */
+header span{
+    align-self:center;
+    color: #fff;
+    padding: 0;
+    margin: 0 10px;
+}
+/* 让tel和logo上下居中 */
+img[alt="logo"],img[alt="tel"]{
+    align-self: center;
+}
+.img[alt="tel"]{
+    margin-left:3%;
+    margin: 15px;
+}
+/* 设置竖线和文字的间距 */
+img[alt="长竖线"]
+{
+    margin:0 40px;
+}
+/* 第二部分 */
+.navigation{
+    display:flex;
+    height: 100px;
+    background-image: url(/img/黑色矩形.gif);
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+/* 设置图标的样式 */
+.navigation img{
+    width: 100px;
+    height: 80px;
+    align-self:center;
+    margin-left: 10%;
+}
+/* 设置文字的间距大小和颜色 */
+.navigation p{
+    margin: 0 30px;
+    font-size: 20px;
+    color: #fff;
+    align-self:center;/*垂直居中*/
+}
+/* 给“主页”设置样式 */
+#home{
+    margin-top: 8.5px;
+    text-align: center;/*文字水平居中*/
+    margin-left: 25%;
+    width: 60px;/*设置宽度*/
+}
+/* 设置快报旁边的三角形的样式 */
+.navigation img[alt="橙色倒三角"]{
+    width: 9px;
+    height: 9px;
+    margin-left:-20px;
+    margin-right: 20px;
+    align-self: center;
+}
+/* 第三部分 */
+.intro{
+    padding: 0;
+    margin: 0;
+    height: 900px;
+    background-image: url(/img/车.png);
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+/* 确定文字的位置 */ 
+.intro section{
+    position:absolute;
+    top: 270px;
+    left: 150px;
+    color: #fff;
+    font-size: 35px;
+}
+/* 设置文字间距和字体大小  */
+.intro p{
+    margin: 10px;
+    font-weight: 300;
+}
+
+#first{
+    display: flex;
+    align-items: baseline;/*设置基线对齐*/
+    font-weight:1000;
+    font-size: larger;
+    border-left: #ff7802 5px solid;/*设置左边框*/
+    padding-left: 20px;
+    font-family:"宋体";
+}
+
+#first span{
+    margin-left: 10px;
+    display: inline-block;/*设置行内块元素,能设置宽高*/
+    border-right: #ff7802 5px solid;/*设置右边框*/
+    padding-right: 20px;/*设置右边距*/
+    line-height: 50px;
+    font-weight: 100;
+    font-size: 35px;
+    font-family:"微软雅黑";
+}
+
+/* 设置最后一个div的位置和宽度 */
+.intro section:last-child p img {
+    margin-left: 40px;
+    width: 170px;
+}
+
+/* 设置橙色说明图标 */
+#orange{
+    display: flex;
+    flex-direction: row-reverse;/*设置反向排列*/
+    position:absolute;
+    top: 550px;
+    left: 160px;
+    width: 210px;
+    height: 50px;
+    background-color: #ff7802;
+    border-radius: 40px;/*设置圆角*/
+}
+img[alt="查看配置"]{
+    margin: 10px;
+    align-self: center;
+    height: 40px;
+    border-radius: 45px;/*设置成圆形*/
+}
+/* 设置文字说明 */
+#orange p{
+    margin: 0;
+    color: #fff;
+    font-size: 30px;
+    align-self: center;
+}
+/* 第四部分 */
+.fourth{
+    height: 150px;
+    box-sizing: border-box;
+    background-image:url(/img/灰色矩形.gif);
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+.fourth p{
+    margin: 0;
+    padding: 0;
+    text-align: center;
+    line-height: 150px;
+    color: #333;
+    font-size: 30px;
+}
+
+/* 第五部分 */
+.features{
+    text-align: center;/*所有文字水平居中*/
+    margin: 0;
+    padding: 0;
+    font-size: 30px;
+}
+
+/*给主标题添加样式*/
+.features h6{
+    margin-bottom: 0;
+    font-size: 2rem;
+    font-weight: 500;
+    color: #ff7802;
+}
+
+/* 设置文字排版 */
+.features div{
+    flex-wrap: wrap;/*换行*/
+    display: flex;
+    flex-direction: row;
+    justify-content: center;/*水平居中排列*/
+}
+
+.features div *{
+    align-self: center;/*所有垂直居中*/
+    margin: 0 50px;/*文字间距*/
+    
+}
+/* 设置灰色倒三角的大小 */
+.features div img[alt="灰色倒三角"]{
+    width: 10px;
+    height: 10px;
+}
+/* 给第二行的文字设置样式 */
+.features .gray p{
+    color: #999;
+    margin: 80px 80px;
+}
+/*给第三行文字设置样式 */
+.features .black2 p{
+    margin-top: 20px;
+}
+/* 给心仪制造商单独设置位置，使文字排列整齐 */
+#manufacturer{
+    margin-left: -550px;
+}
+/* 给最小年限单独设置位置，使文字排列整齐 */
+#mininum{
+    margin-left: -50px;
+}
+/* 给搜索框设置位置 */
+img[alt="搜索框"]{
+    margin-top: 20px;
+    height: 60px;
+    margin-left: 400px;
+}
+/* 用空的div设置成灰色分割线，并给它设置位置 */
+.graysolid{
+    width:100%;
+    margin: 150px 0;
+    height: 5px;
+    background-color: #444;
+    opacity: 0.8;
+    background:radial-gradient(#777,#fff);
+}
+/* 车展的照片部分 */
+.car-list img{
+    width: 25%;
+    height: 30%;
+}
+/* 设置整体车展照片的位置和间距 */
+.features .car-list{
+    margin: 100px 30px;
+    padding: 0;
+    display: block;/*设置块级元素，让后面元素换行*/
+}
+ /* 给每一个照片的文字设置样式 */
+.car-list article{
+    text-align: left;/*左对齐*/
+    margin: 30px 0px;
+    padding: 0;
+    width: 31%;
+    display: inline-block;/*设置行内块元素，能设置宽高，，横向排列*/
+}
+
+.car-list article p{
+    font-size: 25px;
+    color: #555;
+}
+/*单独给小标题设置样式*/
+.car-list h5{
+    margin-top: 20px;/*设置上边距*/
+    margin-left: 50px;/*设置左边距，与照片左边对齐*/
+    border-left: #ff7802 5px solid;/*设置左边框*/
+    padding-left: 20px;
+    margin-bottom: 50px;
+}
+
+/* 第六部分 */
+.sixth{
+    position: relative;/*设置相对定位，方便大标题定位*/
+    text-align: center;/*所有文字水平居中，主要是让大标题居中*/
+    height: 800px;/*篇幅长度*/
+    background-image: url(/img/sixth背景.png);
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+/* 给所有图片设置位置 */
+.sixth img[alt="小小车"]{
+    width: 15%;
+    margin: 220px 80px;
+}
+/* 给大标题设置样式 */
+.sixth h4{
+    position: absolute;
+    top: 7%;
+    left: 42.5%;
+    font-size: 30px;
+    color: #fff;
+    padding: 0;
+    border-left: #ff7802 5px solid;
+    padding-left: 60px;
+    border-right: #ff7802 5px solid;
+    padding-right: 60px;
+}
+/* 给价格背景设置样式 */
+.smaleorange{
+    position: absolute;
+    top: 46.5%;/*设置位置*/
+}
+/* 让第一个背景和照片左边对齐*/
+img[alt="橙色矩形1"]{
+    margin-left:90.5px;
+}
+/*设置其他背景的左边距*/
+img[alt="橙色矩形"]{
+    margin-left:337.5px;
+}
+/* 给价格设置样式 */
+.speed{
+    position: absolute;
+    top: 42.8%;
+    display: flex;
+}
+/* 让第一个价格和照片左边对齐 */
+.speed h6:first-child{
+    margin-left: 100px;
+}
+/* 设置其他价格的左边距 */
+.speed h6:first-child~h6{
+    margin-left: 363px;
+}
+/* 给价格设置样式 */
+.speed h6{
+    padding: 0;
+    font-size: 15px;
+    font-family: "宋体";
+    color: #fff;
+}
+
+/* 给白色三角横线设置位置 */
+.price{
+    position: absolute;
+    top: 57%;
+}
+/* 让第一个横线和照片左边对齐 */
+.price img:first-child{
+    margin-left: 100px;
+}
+/* 设置其他横线的左边距 */
+.price img:first-child~img{
+    margin-left: 160px;
+}
+
+/* 油表样式 */
+.car-info {
+    margin-top: -120px;
+    display: flex;
+    /* justify-content: space-around;水平平均分布 */
+    align-items: center;/*垂直居中*/
+    padding: 20px;
+    color: #fff;
+    font-family: "宋体";/*设置解释文字的字体*/
+}
+
+
+/* 给每个油表的速度设置样式 */
+.car-details h3 {
+    font-size: 18px;
+    margin: 0 20px;
+    margin-bottom: 5px;
+    font-weight: 700;
+}
+/* 给每个车的介绍设置样式 */
+.car-details p {
+    font-size: 14px;
+    margin: 0;
+    opacity: 0.8;
+}
+
+/*使速度和解释文字左对齐*/
+.car-details{
+    text-align: left;
+}
+/* 给第一个油表设置位置，使它和横线对齐 */
+.car-info .car-item:first-child{
+    margin-left: 90px;
+}
+/* 设置其他油表的位置 */
+.car-info .car-item:first-child~.car-item{
+    margin-left: 220px;
+}
+
+/*设置翻页按钮整体样式*/
+.pagination-container {
+    margin-top: 5%;
+    margin-left: 42.5%;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 200px; /* 翻页框宽度 */
+    height: 100px; /* 翻页框高度 */
+}
+
+/* 翻页按钮框的样式 */
+.pagination-frame{
+    width: 100%;
+    height: auto;
+}
+/* 翻页按钮的样式 */
+.pagination-button {
+    border-radius: 45px;/*设置成圆形*/
+    position: absolute; /* 按钮绝对定位在框上 */
+    width: 50px;
+    height: 50px;
+}
+
+.pagination-button.left {
+    left: 5px; /* 按钮位置偏左 */
+}
+
+.pagination-button.right {
+    right: 5px; /* 按钮位置偏右 */
+}
+
+/*支付介绍的总体布局-->弹性布局*/
+.seventh{
+    display: flex;
+    align-items: center;
+    justify-content: space-around;/*均匀排列*/
+    height: 650px;
+    background-image: url(/img/橙色小矩形.png);/*背景颜色*/
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+/*设置所有车的图片大小*/
+.seventh img{
+    width: 85%;
+    height:60%;
+}
+/*介绍的文字样式*/
+.seventh .words{
+    font-size: 22px;
+    width: 800px;
+    display: flex;/*嵌套*/
+    flex-direction: column;
+    position: absolute;
+    top: 384%;
+    left: 430px;
+    color: #eee;
+    font-family: "宋体";
+}
+/*取消间距*/
+.seventh .words *{
+    margin: 0;
+}
+/*主标题样式*/
+.seventh .words p:first-child{
+    font-family: "微软雅黑";
+    width: 265px;
+    font-size:x-large;
+    border-left: #eee 5px solid;
+    padding-left: 20px;
+    border-right: #eee 5px solid;
+    padding-right: 20px;
+}
+
+/*除了主标题以外的文字样式*/
+.seventh .words p:first-child+p{
+    font-family: "微软雅黑";
+    font-size: xxx-large;
+    margin:20px 0;
+    font-weight: bolder;
+}
+/*更改列表图标样式*/
+ol{
+    list-style-image: url(/img/勾勾.gif);
+}
+
+/* 设置列表文字大小 */
+.seventh .words ol{
+    margin-left: -15px;
+}
+
+/*设置总体布局和大小*/
+.eighth{
+    font-size: 20px;
+    height: 1000px;
+    margin-top: 100px;
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: space-around;
+}
+
+/* 单独给强调文字设置样式，突触重点 */
+.eighth div h1{
+    font-weight: 500;
+    font-size: x-large;
+    text-align: center;
+    line-height: 50px;
+    margin:20px;
+}
+
+/* 给所有部件设置大小和间距 */
+.eighth .info div{
+    margin-left: 100px;
+    width: 400px;
+    margin-bottom: 40px;
+}
+
+/* 给强调文字设置背景颜色和文字颜色 */
+.eighth .info div h1:first-child{
+    color: #fff;
+    background-color: #555;
+
+}
+.info div h1:last-child{
+    margin-left: 70px;
+    height: 40px;
+    line-height: 40px;
+    width: 200px;
+    border-left: #ff7802 5px solid;
+    padding-left: 20px;
+    border-right: #ff7802 5px solid;
+    padding-right: 20px
+}
+
+img[alt="第二排车辆信息右"]{
+    height: 700px;
+}
+
+img[alt="汽车播放"]{
+    height: 400px;
+}
+
+/* 设置第九部分的样式 */
+.ninth{
+    color: #fff;
+    /* 设置相对定位,但不改变其位置，方便子元素 定位 */
+    position: relative;
+    height: 300px;
+    background-image: url(/img/橙色车.gif);
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+/* 设置第九部分的顶部样式 */
+.ninth .top{
+    /* 使用弹性布局，使子元素在水平方向上均匀分布 */
+    display: flex;
+    justify-content: space-around;
+    width: 930px;
+    /* 设置相对定位，相对于其正常位置进行定位 */
+    position: relative;
+    top: 60%;
+    left: 12.7%;
+    font-size: 2em;
+    font-weight: bold;
+}
+
+/* 设置第九部分的底部样式 */
+.ninth .bottom{
+    width: 980px;
+    /* 使用弹性布局，使子元素在水平方向上均匀分布 */
+    display: flex;
+    justify-content: space-around;
+    /* 设置相对定位，相对于其正常位置进行定位 */
+    position: relative;
+    top: 60%;
+    left: 15%;
+    font-size: 2em;
+    font-weight: bold;
+}
+/* 设置第九部分底部的样式 */
+.ninth .bottom span{
+    /* 设置左边框为白色，宽度为0.3rem，实线 */
+    border-left: #fFF 0.3rem solid;
+    /* 设置左边框的内边距为20px */
+    padding-left: 20px;
+    /* 设置右边框为白色，宽度为0.3rem，实线 */
+    border-right: #fFF 0.3rem solid;
+    /* 设置右边框的内边距为20px */
+    padding-right: 20px;
+}
+
+/* 设置第十部分的样式 */
+.tenth{
+    /* 文本居中对齐 */
+    text-align: center;
+    /* 设置字体大小为20px */
+    font-size: 20px;
+    /* 设置文本颜色为白色 */
+    color: #fff;
+    /* 使用弹性布局 */
+    display: flex;
+    /* 设置基线对齐 */
+    justify-content: baseline;
+    /* 设置高度为300px */
+    height: 300px;
+    /* 设置背景颜色为#333 */
+    background-color: #333;
+}
+
+/* 设置第十部分中每个div的样式 */
+.tenth div{
+    /* 垂直居中对齐 */
+    align-self: center;
+    /* 设置左右外边距为50px */
+    margin: 0 50px;
+}
+
+/* 设置第十部分中第一个div的第一行样式 */
+.tenth .one .firstline{
+    /* 设置宽度为200px */
+    width: 200px;
+    /* 设置高度为40px */
+    height: 40px;
+    /* 设置行高为40px，使文本垂直居中 */
+    line-height: 40px;
+    /* 设置背景颜色为#ff7802 */
+    background-color: #ff7802;
+}
+
+/* 设置第十部分中第一个div的第二行样式 */
+.tenth .one .secondline{
+    /* 设置宽度为200px */
+    width: 200px;
+    /* 设置高度为40px */
+    height: 40px;
+    /* 设置行高为40px，使文本垂直居中 */
+    line-height: 40px;
+    /* 设置左边框为白色，宽度为3px，实线 */
+    border-left: #fFF 3px solid;
+    /* 设置右边框为白色，宽度为3px，实线 */
+    border-right: #fFF 3px solid;
+}   
+
+/* 设置登录表单的样式 */
+.loging input{
+    /* 设置宽度为200px */
+    width: 200px;
+    /* 设置高度为35px */
+    height: 35px;
+    /* 设置边框为#999，宽度为0.05em，实线 */
+    border: #999 0.05em solid;
+    /* 设置边框圆角为30px */
+    border-radius: 30px;
+    /* 设置背景颜色为#333 */
+    background-color: #333;
+}
+
+/* 设置登录表单的样式 */
+.loging{
+    /* 设置相对定位 */
+    position: relative;
+}
+
+/* 设置登录表单中图片的样式 */
+.loging img{
+    /* 设置宽度为30px */
+    width: 30px;
+    /* 设置相对定位 */
+    position: relative;
+    /* 设置边框圆角为45px */
+    border-radius:45px;
+    /* 设置顶部外边距为10px */
+    top: 10px;
+    /* 设置左侧外边距为41px */
+    left: 41px;
+}
+
+/* 设置第十一部分的样式 */
+.eleventh{
+    /* 设置相对定位 */
+    position: relative;
+    /* 设置高度为700px */
+    height:700px;
+    /* 设置背景图片，不重复，覆盖整个区域 */
+    background-image: url(/img/tenth背景.gif);
+    background-repeat: no-repeat;
+    background-size:cover;
+}
+
+/* 设置第十一部分中选项的样式 */
+.eleventh .choices{
+    /* 设置字体大小为0.9rem */
+    font-size:0.9rem;
+    /* 设置字体粗细为100 */
+    font-weight: 100;
+    /* 设置文本颜色为白色 */
+    color: #fff;
+    /* 设置相对定位 */
+    position: relative;
+    /* 设置顶部外边距为30% */
+    top: 30%;
+    /* 使用弹性布局 */
+    display: flex;
+    /* 设置元素之间的间距均匀分布 */
+    justify-content: space-around;
+}
+
+/* 设置第十一部分中左侧选项的样式 */
+.eleventh .choices .el_left{
+    /* 设置高度为480px */
+    height: 480px;
+    /* 设置宽度为500px */
+    width: 500px;
+    /* 使用弹性布局 */
+    display: flex;
+    /* 设置背景图片，不重复，包含整个区域 */
+    background-image: url(/img/橘色left.gif);
+    background-repeat: no-repeat;
+    background-size:contain;
+}
+
+/* 设置第十一部分中左侧选项中第一个div的样式 */
+.el_left div:first-child{
+    /* 设置左侧外边距为115px */
+    margin-left: 115px;
+}
+
+/* 设置第十一部分中右侧选项的样式 */
+.eleventh .choices .el_right{
+    /* 设置高度为480px */
+    height: 480px;
+    /* 设置宽度为500px */
+    width: 500px;
+    /* 使用弹性布局 */
+    display: flex;
+    /* 设置背景图片，不重复，包含整个区域 */
+    background-image: url(/img/灰色right.gif);
+    background-repeat: no-repeat;
+    background-size:contain;
+}
+
+/* 设置第十一部分中右侧选项中第一个div的样式 */
+.el_right div:first-child{
+    /* 设置左侧外边距为100px */
+    margin-left: 100px;
+}
+
+/* 设置第十一部分中选项中透明方向键的样式 */
+.eleventh .choices img[alt="透明方向键"]{
+    display: none;
+    /* 设置高度为137px */
+    height: 137px;
+    /* 设置不透明度为0.6 */
+    opacity: 0.6;
+}
+
+/* 设置第十一部分中选项的标题样式 */
+.eleventh .choices h1{
+    /* 设置字体大小为2em */
+    font-size: 2em;
+    /* 设置字体粗细为500 */
+    font-weight: 500;
+}
+
+/* 设置第十一部分中段落的样式 */
+.eleventh>p{
+    /* 设置宽度为200px */
+    width: 200px;
+    /* 设置文本颜色为白色 */
+    color: #fff;
+    /* 设置相对定位 */
+    position: relative;
+    /* 设置左侧外边距为750px */
+    margin-left: 750px;
+    /* 设置文本居中对齐 */
+    text-align: center;
+    /* 设置字体大小为larger */
+    font-size: larger;
+    /* 设置左边框为#ff7802，宽度为3px，实线 */
+    border-left: #ff7802 3px solid;
+    /* 设置右边框为#ff7802，宽度为3px，实线 */
+    border-right: #ff7802 3px solid;
+}
+
+/* 设置第十二部分的样式 */
+.twelfth{
+    /* 设置文本居中对齐 */
+    text-align: center;
+    /* 使用弹性布局 */
+    display: flex;
+    /* 设置元素在容器的右侧对齐 */
+    justify-content: flex-end;
+}
+
+/* 设置第十二部分中计划的样式 */
+.twelfth .plan{
+    /* 设置字体大小为1rem */
+    font-size: 1rem;
+    /* 设置字体粗细为100 */
+    font-weight: 100;
+    /* 设置文本颜色为白色 */
+    color: #fFF;
+    /* 设置相对定位 */
+    position: absolute;
+    /* 设置左侧外边距为8rem */
+    left: 8rem;
+    /* 设置顶部外边距为6*/
+        /* 设置顶部导航栏的样式 */
+    top: 690%;
+    /* 设置导航栏的宽度 */
+    width: 450px;
+    /* 设置导航栏的文本对齐方式为左对齐 */
+    text-align: left;
+    /* 设置导航栏的高度 */
+    height: 500px;
+    /* 设置导航栏的背景图片 */
+    background-image: url(/img/时间表.png);
+    /* 设置背景图片不重复 */
+    background-repeat: no-repeat;
+    /* 设置背景图片的大小为覆盖整个导航栏 */
+    background-size: cover;
+    
+}
+
+/* 设置底部页脚的样式 */
+.footercars{
+    /* 设置页脚的宽度 */
+    width: 600px;
+    /* 设置页脚的上下外边距为300px，左右外边距为0 */
+    /* margin: 300px 0; */
+    /* 使用弹性布局 */
+    display: flex;
+    /* 设置弹性布局的方向为垂直方向 */
+    flex-direction: column;
+    /* 设置弹性布局的垂直对齐方式为居中对齐 */
+    justify-content: center;
+}
+
+/* 设置底部页脚的第一个和第二个子元素的样式 */
+.footercars .footercar1,.footercar2{
+    /* 设置底部边框的样式为#333，宽度为0.05em，实线 */
+    border-bottom: #333 0.05em solid;
+}
+
+/* 设置底部页脚的子元素的样式 */
+.footercars div {
+    /* 设置子元素的上下外边距为10px，左右外边距为0 */
+    margin: 10px;
+    /* 设置子元素的内边距为0 */
+    padding:0;
+    /* 设置子元素的垂直对齐方式为基线对齐 */
+    align-self: baseline;
+    /* 设置子元素的高度为130px */
+    height: 130px;
+}
+
+/* 设置底部页脚的标题样式 */
+.footercars h1{
+    /* 设置标题的字体大小为x-large */
+    font-size: x-large;
+    /* 设置标题的宽度为200px */
+    width: 200px;
+    /* 设置标题的左边框为#ff7802，宽度为3px，实线 */
+    border-left: #ff7802 3px solid;
+    /* 设置标题的右边框为#ff7802，宽度为3px，实线 */
+    border-right: #ff7802 3px solid;
+    /* 设置标题的上外边距为50px */
+    margin-top: 50px;
+    /* 设置标题的左右内边距为5px */
+    padding: 0 5px;
+}
+
+/* 设置地址列表的样式 */
+#adress{
+    /* 设置地址列表的左右内边距为1rem */
+    padding:0 1rem;
+    /* 设置地址列表的项目符号为导航栏定位图标 */
+    list-style-image: url(/img/导航栏定位图标.gif.png);
+}
+
+/* 设置电话列表的样式 */
+#tel{
+    /* 设置电话列表的左右内边距为1.5rem */
+    padding:0 1.5rem;
+    /* 设置电话列表的项目符号为导航栏电话图标 */
+    list-style-image: url(/img/导航栏电话.gif.png);
+}
+
+/* 设置传真列表的样式 */
+#transport{
+    /* 设置传真列表的左右内边距为1rem */
+    padding:0 1rem;
+    /* 设置传真列表的项目符号为传真图标 */
+    list-style-image: url(/img/传真图标.png.gif);
+}
+
+/* 设置电子邮件列表的样式 */
+#email{
+    /* 设置电子邮件列表的左右内边距为1rem */
+    padding:0 1rem;
+    /* 设置电子邮件列表的项目符号为邮件图标 */
+    list-style-image: url(/img/邮件图标.png);
+
+}
+
+/* 设置联系信息的样式 */
+.contact h1{
+    /* 设置联系信息标题的文本对齐方式为居中对齐 */
+    text-align: center;
+    /* 设置联系信息标题的字体大小为x-large */
+    font-size: x-large;
+    /* 设置联系信息标题的宽度为150px */
+    width: 150px;
+    /* 设置联系信息标题的左边框为#ff7802，宽度为3px，实线 */
+    border-left: #ff7802 3px solid;
+    /* 设置联系信息标题的右边框为#ff7802，宽度为3px，实线 */
+    border-right: #ff7802 3px solid;
+    /* 设置联系信息标题的上外边距为50px */
+    margin-top: 50px;
+}
+
+/* 设置联系信息的样式 */
+.contact{
+    /* 设置联系信息的文本对齐方式为左对齐 */
+    text-align: left;
+}
+
+/* 设置计划标题的样式 */
+.plan h2{
+    /* 设置计划标题的颜色为#ff7802 */
+    color: #ff7802;
+    /* 设置计划标题的上外边距为40px */
+    margin-top:40px;
+    /* 设置计划标题的左外边距为30px */
+    margin-left: 30px;
+    /* 设置计划标题的左右内边距为20px */
+    padding:0 20px;
+    /* 设置计划标题的宽度为100px */
+    width: 100px;
+    /* 设置计划标题的字体粗细为500 */
+    font-weight: 500;
+    /* 设置计划标题的左边框为#ffffff，宽度为3px，实线 */
+    border-left: #ffffff 3px solid;
+    /* 设置计划标题的右边框为#ffffff，宽度为3px，实线 */
+    border-right: #ffffff 3px solid;
+}
+
+/* 设置计划副标题的样式 */
+h3{
+    /* 设置计划副标题的字体粗细为500 */
+    font-weight: 500;
+    /* 设置计划副标题的左内边距为30px */
+    padding-left: 30px;
+    /* 设置计划副标题的上外边距为20px */
+    margin-top: 20px;
+}
+
+/* 设置计划内容的样式 */
+.plan p{
+    /* 设置计划内容的左内边距为30px */
+    padding-left: 30px;
+    /* 设置计划内容的上下外边距为0.5rem，左右外边距为0 */
+    margin: 0.5rem;
+}
+
+/* 设置页脚的样式 */
+footer{
+    /* 设置页脚的高度为200px */
+    height: 200px;
+    /* 设置页脚的背景图片 */
+    background-image: url(/img/灰色页脚.gif);
+    /* 设置背景图片不重复 */
+    background-repeat: no-repeat;
+    /* 设置背景图片的大小为覆盖整个页脚 */
+    background-size: cover;
+
+}
+/* 设置页脚图片的样式 */
+footer img{
+    /* 设置页脚图片的相对定位 */
+    position: relative;
+    /* 设置页脚图片的上外边距为50px */
+    top: 50px;
+    /* 设置页脚图片的左外边距为100px */
+    left: 100px;
+}
+
+
+
+
+/*悬停样式设置*/
+/*给顶页导航栏文字设置一个悬停变成黄色的样式*/
+.banner span:hover{
+    color: #ff7802;
+}
+
+/*给“主页”旁边的三角形设置一个悬停放大的样式*/
+img[alt="橙色倒三角"]:hover{
+    transform: scale(1.5);
+}
+
+/*给导航栏的文字设置悬停时显示下划线的提示*/
+.navigation p:hover{
+    border-bottom: #ff7802 5px solid;/*设置下划线*/
+    padding-bottom: 5px;/*下边距*/
+}
+
+/*给查看第十一个版块的按钮设置悬停显现的样式*/
+.el_left:hover img[alt="透明方向键"]{
+    display: inline-block;
+}
+.el_right:hover img[alt="透明方向键"]{
+    display: inline-block;
+}
+
+/*给登录按钮设置一个悬停时放大的样式*/
+img[alt="登录按钮"]:hover{
+    transform: scale(1.5);
+}
+
+/*给查看配置按钮设置一个悬停放大的样式*/
+#orange:hover {
+    transform: scale(1.1);
+}
+/*给翻页按钮设置一个悬停放大样式*/
+.pagination-button:hover {
+    transform: scale(1.1);
+}
+
+
+
+/*响应式布局*/
+@media (max-width: 480px) {
+    /* 设置小屏幕设备的顶部导航栏图片的样式 */
+    header .banner img {
+        /* 设置图片的宽度为100px */
+        width: 100px;
+    }
+
+    /* 设置小屏幕设备的特性区域的样式 */
+    .features {
+        /* 设置特性区域的字体大小为14px */
+        font-size: 14px;
+    }
+
+    /* 设置小屏幕设备的汽车列表图片的样式 */
+    .car-list img {
+        /* 设置图片的宽度为100% */
+        width: 100%;
+    }
+
+    /* 设置小屏幕设备的汽车列表段落的样式 */
+    .car-list p {
+        /* 设置段落的字体大小为12px */
+        font-size: 12px;
+    }
+
+    .contact p {
+        font-size: 14px;
+    }
+}
+
+/* 当屏幕宽度小于或等于768px时，应用以下样式 */
+@media (max-width: 768px) {
+    /* 将头部和导航栏的布局方向设置为垂直 */
+    header,
+    nav.navigation {
+        flex-direction: column;
+        /* 将子元素在交叉轴上的对齐方式设置为起点对齐 */
+        align-items: flex-start;
+    }
+
+    /* 将头部右侧区域的布局方向设置为垂直 */
+    header .right {
+        flex-direction: column;
+        /* 将子元素在交叉轴上的对齐方式设置为起点对齐 */
+        align-items: flex-start;
+    }
+
+    /* 将导航栏中的文本居中对齐 */
+    .navigation {
+        text-align: center;
+    }
+
+    /* 设置内容区域的内边距为10px */
+    .content {
+        padding: 10px;
+    }
+
+    /* 将特性区域的布局方向设置为垂直，并设置子元素之间的间距为20px */
+    .features {
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    /* 将汽车列表的布局方向设置为垂直，并设置子元素之间的间距为20px */
+    .car-list {
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    /* 将汽车列表项的宽度设置为100% */
+    .car-item {
+        width: 100%;
+    }
+}
