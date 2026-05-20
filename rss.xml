@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0">
+  <channel>
+    <title>DevPortfolio</title>
+    <link>https://jiangtaibai1.github.io</link>
+    <description>全栈开发、独立游戏开发与技术分享内容订阅源。</description>
+    <language>zh-CN</language>
+    
+    <item>
+      <title>使用 Next.js 15 构建现代化个人网站</title>
+      <link>https://jiangtaibai1.github.io/blog/nextjs-personal-website/</link>
+      <guid>https://jiangtaibai1.github.io/blog/nextjs-personal-website/</guid>
+      <pubDate>Fri, 10 Apr 2026 00:00:00 GMT</pubDate>
+      <description>从零开始构建一个支持 MDX、暗色模式和 SEO 优化的个人网站，深入探讨 App Router 的最佳实践。</description>
+    </item>
+    <item>
+      <title>React 19 新特性深度解析：Actions、use() 与并发特性</title>
+      <link>https://jiangtaibai1.github.io/blog/react19-new-features/</link>
+      <guid>https://jiangtaibai1.github.io/blog/react19-new-features/</guid>
+      <pubDate>Wed, 25 Mar 2026 00:00:00 GMT</pubDate>
+      <description>全面解读 React 19 的核心新特性，包括 Actions、use() Hook、Document Metadata 等，并结合实际案例说明如何在项目中应用。</description>
+    </item>
+    <item>
+      <title>Unity 独立游戏开发：从原型到上线的完整流程</title>
+      <link>https://jiangtaibai1.github.io/blog/unity-indie-game-dev/</link>
+      <guid>https://jiangtaibai1.github.io/blog/unity-indie-game-dev/</guid>
+      <pubDate>Sun, 15 Feb 2026 00:00:00 GMT</pubDate>
+      <description>分享一款独立游戏从原型设计到最终上架 Steam 的全流程经验，包括引擎选型、美术工作流、性能优化和发行策略。</description>
+    </item>
+  </channel>
+</rss>

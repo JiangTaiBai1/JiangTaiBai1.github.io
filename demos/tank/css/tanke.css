@@ -1,0 +1,59 @@
+body {
+    background-image: url('/坦克移动/img/grassland.png');
+    background-repeat: repeat;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    height: 100vh;
+}
+
+#instructions {
+    position: absolute;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.7);
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    text-align: center;
+    z-index: 100;
+    transition: opacity 1s ease-out;
+}
+
+#game-container {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+}
+
+#tank {
+    position: absolute;
+    width: 60px;
+    height: 60px;
+    left: 50px;
+    top: 50%;
+    transform: translateY(-50%);
+    transition: transform 0.2s;
+    transform-origin: center;
+}
+
+.bullet {
+    position: absolute;
+    width: 20px;
+    height: 10px;
+    background-image: url('/坦克移动/img/zidan.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    transform-origin: center;
+}
+
+.enemy {
+    width: 40px;
+    height: 40px;
+    position: absolute;
+    background-image: url('/坦克移动/img/僵尸.png'); /* 你自己的敌人图片路径 */
+    background-size: cover;
+    background-repeat: no-repeat;
+    border-radius: 50%; /* 如果想要圆形敌人 */
+}

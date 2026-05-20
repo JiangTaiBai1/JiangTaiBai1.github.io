@@ -1,0 +1,6 @@
+1:"$Sreact.fragment"
+2:I[22016,["/_next/static/chunks/0sgx9css5k85i.js","/_next/static/chunks/0jmaojt_rgft8.js","/_next/static/chunks/0d3shmwh5_nmn.js"],""]
+3:I[97367,["/_next/static/chunks/0sgx9css5k85i.js","/_next/static/chunks/0jmaojt_rgft8.js","/_next/static/chunks/0d3shmwh5_nmn.js"],"OutletBoundary"]
+4:"$Sreact.suspense"
+0:{"rsc":["$","$1","c",{"children":[["$","div",null,{"className":"flex flex-col items-center justify-center min-h-[60vh] px-4 text-center","children":[["$","p",null,{"className":"text-6xl font-bold text-primary mb-4","children":"404"}],["$","h1",null,{"className":"text-2xl font-semibold text-foreground mb-3","children":"页面不存在"}],["$","p",null,{"className":"text-muted-foreground mb-8 max-w-md","children":"你访问的页面可能已被移动、删除或从未存在过。"}],["$","$L2",null,{"href":"/","className":"px-6 py-3 bg-primary text-primary-foreground rounded-lg font-medium hover:bg-primary/90 transition-colors","children":"返回首页"}]]}],null,["$","$L3",null,{"children":["$","$4",null,{"name":"Next.MetadataOutlet","children":"$@5"}]}]]}],"isPartial":false,"staleTime":300,"varyParams":null,"buildId":"L49fGPsIYisp7QiynyF--"}
+5:null
