@@ -1,0 +1,39 @@
+---
+title: "像素地牢"
+description: "Unity 开发的 Roguelike 像素地牢游戏，程序化关卡生成，支持 Windows/Mac/WebGL。"
+category: "game"
+tags: ["Unity", "C#", "游戏开发", "Roguelike", "像素风"]
+cover: "/images/projects/pixel-dungeon.svg"
+demoUrl: "https://itch.io/example"
+repoUrl: "https://github.com/example/pixel-dungeon"
+date: "2025-08-15"
+featured: true
+---
+
+## 游戏简介
+
+一款经典 Roguelike 像素地牢游戏，每次游玩都有不同体验。
+
+## 核心玩法
+
+- **程序化生成**：每局关卡、怪物、物品随机生成
+- **回合制战斗**：策略性战斗系统
+- **多种职业**：战士、法师、盗贼各有特色
+- **成就系统**：丰富的解锁内容
+
+## 技术亮点
+
+使用波函数坍缩（WFC）算法生成关卡，确保地图的可玩性和多样性。
+
+```csharp
+public class DungeonGenerator : MonoBehaviour
+{
+    public void Generate(int width, int height)
+    {
+        // WFC 算法实现
+        var wfc = new WaveFunctionCollapse(width, height, tileset);
+        wfc.Solve();
+        ApplyTilemap(wfc.Result);
+    }
+}
+```

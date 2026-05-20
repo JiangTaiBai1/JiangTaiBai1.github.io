@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>笔记本系统 - 控制面板</title>
+    <link rel="stylesheet" href="/css/dashboard.css">
+    <link rel="stylesheet" href="/css/modal.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="dashboard-container">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h2>笔记本系统</h2>
+                <div class="user-info">
+                    <img src="https://via.placeholder.com/40" alt="用户头像" class="user-avatar">
+                    <span id="username-display"></span>
+                </div>
+            </div>
+            <nav class="sidebar-nav">
+                <ul>
+                    <li class="active" data-section="events"><i class="fas fa-calendar-alt"></i> 事件管理</li>
+                    <li data-section="categories"><i class="fas fa-tags"></i> 分类管理</li>
+                    <li data-section="profile"><i class="fas fa-user"></i> 个人资料</li>
+                </ul>
+            </nav>
+            <div class="sidebar-footer">
+                <button id="logout-btn" class="btn btn-secondary"><i class="fas fa-sign-out-alt"></i> 退出登录</button>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <div id="events-section" class="content-section active">
+                <div class="section-header">
+                    <h2>事件管理</h2>
+                    <div class="section-actions">
+                        <button id="create-event-btn" class="btn btn-primary">
+                            <i class="fas fa-plus"></i> 创建事件
+                        </button>
+                        <div class="search-box">
+                            <input type="text" id="event-search" placeholder="搜索事件...">
+                            <button id="search-event-btn"><i class="fas fa-search"></i></button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="filters">
+                    <div class="filter-group">
+                        <label for="category-filter">分类:</label>
+                        <select id="category-filter">
+                            <option value="">全部</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="status-filter">状态:</label>
+                        <select id="status-filter">
+                            <option value="">全部</option>
+                            <option value="未开始">未开始</option>
+                            <option value="进行中">进行中</option>
+                            <option value="已完成">已完成</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="date-filter">日期范围:</label>
+                        <input type="date" id="start-date-filter">
+                        <span>至</span>
+                        <input type="date" id="end-date-filter">
+                    </div>
+                </div>
+                
+                <div class="events-list">
+                    <div class="list-header">
+                        <div class="header-item" style="width: 25%">标题</div>
+                        <div class="header-item" style="width: 15%">分类</div>
+                        <div class="header-item" style="width: 15%">开始时间</div>
+                        <div class="header-item" style="width: 15%">结束时间</div>
+                        <div class="header-item" style="width: 10%">状态</div>
+                        <div class="header-item" style="width: 20%">操作</div>
+                    </div>
+                    <div id="events-container" class="list-body">
+                        <!-- 事件列表将通过JS动态加载 -->
+                    </div>
+                </div>
+                
+                <div class="pagination">
+                    <button id="prev-page" class="btn btn-secondary" disabled><i class="fas fa-chevron-left"></i></button>
+                    <span id="page-info">第 1 页</span>
+                    <button id="next-page" class="btn btn-secondary"><i class="fas fa-chevron-right"></i></button>
+                </div>
+            </div>
+
+            <div id="categories-section" class="content-section">
+                <div class="section-header">
+                    <h2>分类管理</h2>
+                    <div class="section-actions">
+                        <button id="create-category-btn" class="btn btn-primary">
+                            <i class="fas fa-plus"></i> 创建分类
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="categories-list">
+                    <div class="list-header">
+                        <div class="header-item" style="width: 70%">分类名称</div>
+                        <div class="header-item" style="width: 30%">操作</div>
+                    </div>
+                    <div id="categories-container" class="list-body">
+                        <!-- 分类列表将通过JS动态加载 -->
+                    </div>
+                </div>
+            </div>
+
+            <div id="profile-section" class="content-section">
+                <div class="section-header">
+                    <h2>个人资料</h2>
+                </div>
+                
+                <div class="profile-form">
+                    <form id="profileForm">
+                        <div class="form-group">
+                            <label for="profile-username">用户名</label>
+                            <input type="text" id="profile-username" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label for="profile-name">姓名</label>
+                            <input type="text" id="profile-name">
+                        </div>
+                        <div class="form-group">
+                            <label for="profile-email">邮箱</label>
+                            <input type="email" id="profile-email">
+                        </div>
+                        <div class="form-group">
+                            <label for="profile-phone">电话</label>
+                            <input type="tel" id="profile-phone">
+                        </div>
+                        <div class="form-group">
+                            <label for="profile-age">年龄</label>
+                            <input type="number" id="profile-age" min="0">
+                        </div>
+                        <button type="submit" class="btn btn-primary">保存更改</button>
+                    </form>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- 事件模态框 -->
+    <div id="event-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn">&times;</span>
+            <h2 id="event-modal-title">创建新事件</h2>
+            <form id="event-form">
+                <input type="hidden" id="event-id">
+                <div class="form-group">
+                    <label for="event-title">标题*</label>
+                    <input type="text" id="event-title" required>
+                </div>
+                <div class="form-group">
+                    <label for="event-category">分类</label>
+                    <select id="event-category">
+                        <option value="">无分类</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="event-content">内容</label>
+                    <textarea id="event-content" rows="3"></textarea>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="event-start-date">开始时间*</label>
+                        <input type="datetime-local" id="event-start-date" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="event-end-date">结束时间*</label>
+                        <input type="datetime-local" id="event-end-date" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="event-status">状态</label>
+                    <select id="event-status">
+                        <option value="未开始">未开始</option>
+                        <option value="进行中">进行中</option>
+                        <option value="已完成">已完成</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="event-level">优先级</label>
+                    <select id="event-level">
+                        <option value="低">低</option>
+                        <option value="中">中</option>
+                        <option value="高">高</option>
+                    </select>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">保存</button>
+                    <button type="button" class="btn btn-secondary" id="cancel-event-btn">取消</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 分类模态框 -->
+    <div id="category-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn">&times;</span>
+            <h2 id="category-modal-title">创建新分类</h2>
+            <form id="category-form">
+                <input type="hidden" id="category-id">
+                <div class="form-group">
+                    <label for="category-name">分类名称*</label>
+                    <input type="text" id="category-name" required>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">保存</button>
+                    <button type="button" class="btn btn-secondary" id="cancel-category-btn">取消</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 确认对话框 -->
+    <div id="confirm-modal" class="modal">
+        <div class="modal-content confirm-modal">
+            <h3 id="confirm-message"></h3>
+            <div class="confirm-actions">
+                <button id="confirm-yes" class="btn btn-danger">确定</button>
+                <button id="confirm-no" class="btn btn-secondary">取消</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 加载中模态框 -->
+    <div id="loading-modal" class="modal">
+        <div class="modal-content">
+            <div class="spinner"></div>
+            <p>处理中...</p>
+        </div>
+    </div>
+
+    <script type="module" src="/js/main.js"></script>
+</body>
+</html>

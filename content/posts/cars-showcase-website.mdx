@@ -1,0 +1,278 @@
+---
+title: "纯静态 HTML/CSS 构建豪华汽车展示网站：从设计稿到完整页面"
+date: "2026-05-20"
+description: "使用原生 HTML/CSS 从零搭建一个专业的汽车经销商展示网站，深入解析 Flexbox 弹性布局、多层级导航设计、商品筛选系统与响应式图片排版等前端实战技巧。"
+tags: ["HTML", "CSS", "Flexbox", "静态网站", "UI 设计"]
+cover: "/images/posts/cars-showcase-cover.svg"
+relatedProjects: ["cars-showcase"]
+---
+
+# 纯静态 HTML/CSS 构建豪华汽车展示网站
+
+如果你想练习 HTML/CSS 布局功底，做一个**高保真静态页面**是最好的方式。本文记录了用纯 HTML/CSS（零 JavaScript 业务逻辑）搭建一个完整的汽车经销商展示网站的过程。
+
+> 在线预览：[CarsStore Demo](/demos/cars/)
+
+## 项目架构总览
+
+```
+TheCar/
+├── html/
+│   └── cars.html        # 主页面（单页应用）
+├── css/
+│   └── Cars.css         # 全部样式（约 400 行）
+├── img/
+│   └── 汽车-assets/     # 图片资源（背景、图标、车型图等）
+└── js/
+    └── (空)             # 纯静态，无 JS 业务逻辑
+```
+
+整个网站分为六个视觉区块，从上到下依次排列：
+
+```
+┌──────────────────────────────────────────┐
+│  ① 顶部信息栏  (地址 / 电话 / 登录/注册)   │
+├──────────────────────────────────────────┤
+│  ② 主导航栏    (Logo + 8 个导航链接)       │
+├──────────────────────────────────────────┤
+│  ③ Hero 大图   (Mercedes-Benz SLS AMG)    │
+├──────────────────────────────────────────┤
+│  ④ 筛选系统    (品牌/类型/状态/价格/年限)   │
+├──────────────────────────────────────────┤
+│  ⑤ 精选车辆    (4 辆车型卡片 + 价格/参数)   │
+├──────────────────────────────────────────┤
+│  ⑥ 底部信息    (品牌承诺 + 联系方式)        │
+└──────────────────────────────────────────┘
+```
+
+## 一、顶部信息栏：Flexbox 实战
+
+顶部栏是一个深色背景的通栏，包含地址、电话、登录/注册/购物车等元素。核心技术是 **Flexbox 弹性布局**：
+
+```css
+header {
+    height: 50px;
+    background-image: url(/img/深灰色矩形.png);
+    display: flex;
+    flex-direction: row;
+}
+```
+
+### 左右分区布局
+
+通过 `margin-left: auto` 的巧妙用法，将右侧元素推到最右边，无需额外 `justify-content: space-between`：
+
+```css
+.right {
+    display: flex;
+    margin-left: 150px;      /* 与左侧内容保持间距 */
+    justify-content: space-between;
+}
+```
+
+### 垂直居中的正确姿势
+
+所有子元素通过 `align-self: center` 统一垂直居中：
+
+```css
+header span {
+    align-self: center;
+    color: #fff;
+}
+img[alt="logo"], img[alt="tel"] {
+    align-self: center;
+}
+```
+
+**为什么不用 `align-items: center`？** 直接在父容器上设置 `align-items` 当然可以，但 `align-self` 提供了更细粒度控制——某些元素（如竖线装饰图）可能需要不同的对齐方式。
+
+## 二、主导航栏：多层信息架构
+
+导航栏包含了 Logo、主页、快报（带下拉三角）、视频、库存、关于、服务、论坛、商店、联系我们等 8 个一级导航项：
+
+```css
+.navigation {
+    display: flex;
+    height: 100px;
+    background-image: url(/img/黑色矩形.gif);
+    background-size: cover;
+}
+
+.navigation p {
+    margin: 0 30px;
+    font-size: 20px;
+    color: #fff;
+    align-self: center;
+}
+```
+
+### 下拉三角的巧妙实现
+
+"快报"旁边有一个橙色倒三角，暗示着二级菜单：
+
+```css
+.navigation img[alt="橙色倒三角"] {
+    width: 9px;
+    height: 9px;
+    margin-left: -20px;    /* 负边距靠近文字 */
+    margin-right: 20px;
+    align-self: center;
+}
+```
+
+`margin-left: -20px` 是一个常用技巧——让三角形图标"贴紧"前面的文字，视觉上形成一个整体。
+
+### "主页"高亮样式
+
+通过 `#home` ID 选择器，给当前激活的导航项设置特殊样式：
+
+```css
+#home {
+    margin-top: 8.5px;
+    text-align: center;
+    margin-left: 25%;        /* 大左边距拉开与 Logo 的距离 */
+    width: 60px;
+}
+```
+
+## 三、Hero 大图区：视觉冲击力
+
+Hero 区域使用了全宽背景图 + 多层文字叠加的经典设计：
+
+```html
+<section class="intro">
+    <section>
+        <p id="first">天生无畏 <span>寻找你的梦想座驾</span></p>
+        <p>梅赛德斯奔驰<span>MerrcedesBenz</span></p>
+        <p>2015款SLS AMG</p>
+        <p>45周念中国限量版
+            <img src="/img/大图文字框框.gif" alt="307.97w元">
+        </p>
+    </section>
+    <div id="orange">
+        <img src="/img/查看配置.gif" alt="查看配置">
+        <p>查看配置</p>
+    </div>
+</section>
+```
+
+### 设计要点
+
+- **品牌名中英混排**：中文名大号宋体，英文名小号粗体，形成视觉层次
+- **价格标签**：用橙色背景图片包裹，醒目突出
+- **CTA 按钮**：橙色背景 + 白色文字的"查看配置"，符合品牌调性
+
+## 四、车辆筛选系统：模拟搜索体验
+
+这是一个完全用 CSS 和 HTML 实现的商品筛选器，包含五个筛选维度：
+
+```html
+<div class="black1">
+    <p>选择品牌</p>
+    <img src="/img/倒三角 4.gif" alt="灰色倒三角">
+    <p>车辆类型</p>
+    <img src="/img/倒三角 4.gif" alt="灰色倒三角">
+    <p>车辆状态</p>
+    <img src="/img/倒三角 4.gif" alt="灰色倒三角">
+    <p>价格区间</p>
+    <img src="/img/区间.gif" alt="价格区间">
+</div>
+```
+
+每个筛选项后面跟着一个下拉三角，暗示可以展开选项。价格区间用专门的滑块图标，视觉区分于其他筛选项。
+
+### 双层筛选布局
+
+```
+┌─────────────────────────────────────────────┐
+│  选择品牌 ▼  车辆类型 ▼  车辆状态 ▼  价格区间 ┃  │  ← 第一行
+├─────────────────────────────────────────────┤
+│  心仪制造商？   心仪类型？   家用车/新车/二手车   │  ← 提示文字
+├─────────────────────────────────────────────┤
+│  最小年限 ▼   最大年限 ▼           [搜索框]    │  ← 第二行
+└─────────────────────────────────────────────┘
+```
+
+这种渐进式筛选布局非常贴近真实的汽车电商网站，用户可以逐步缩小选择范围。
+
+## 五、精选车辆：卡片式商品展示
+
+四辆车型以横向排列的卡片形式展示，每张卡片包含：
+
+- 车型缩略图
+- 价格（大号橙色数字）
+- 里程数（带油表图标）
+- 车辆参数（新旧/年份/变速箱/颜色/燃料类型）
+
+```html
+<div class="car-item">
+    <div class="car-details">
+        <h3>
+            <img src="/img/油表.gif" alt="油表">
+            23467 KM
+        </h3>
+        <p>二手·2014·手动·黄色·汽油</p>
+    </div>
+</div>
+```
+
+## CSS 技巧总结
+
+### 1. 全局防收缩
+
+```css
+* {
+    flex-shrink: 0;    /* 防止 flex 子元素被压缩 */
+}
+```
+
+这在复杂的 Flexbox 布局中非常重要——当容器空间不足时，默认 `flex-shrink: 1` 会导致元素被挤扁，设置 `flex-shrink: 0` 保证所有元素保持原始尺寸。
+
+### 2. 背景图替代纯色
+
+在这个项目中，大量使用了背景图片而不是 CSS 纯色：
+
+```css
+header {
+    background-image: url(/img/深灰色矩形.png);   /* 而非 background-color: #333 */
+}
+.navigation {
+    background-image: url(/img/黑色矩形.gif);
+}
+```
+
+> 注意：这是学习阶段的常见做法。在生产环境中，纯色背景直接用 `background-color` 即可，图片背景用于渐变或纹理。
+
+### 3. `box-sizing: border-box`
+
+```css
+body {
+    box-sizing: border-box;
+}
+```
+
+确保 padding 和 border 包含在元素宽度内，避免溢出问题——这是现代 CSS 布局的基础设置。
+
+## 项目反思
+
+| 做得好的 | 可以改进的 |
+| :--- | :--- |
+| Flexbox 布局运用熟练 | 筛选器没有实际交互逻辑 |
+| 视觉层次清晰，信息架构合理 | 大量使用图片而非 CSS 绘制 |
+| 品牌色（橙+黑+白）贯穿始终 | 未做移动端响应式适配 |
+| 装饰元素丰富，接近真实网站 | 缺少表单验证和状态反馈 |
+
+## 总结
+
+这个项目虽然是一个**纯静态页面**，但它涵盖了前端开发中最核心的 CSS 技能：
+
+- **Flexbox 弹性布局**：从顶部栏到车辆卡片，全程使用 flex
+- **背景图处理**：图片 vs CSS 纯色，何时该用哪个
+- **多层嵌套布局**：Header → Nav → Hero → Filter → Gallery 的层级结构
+- **装饰元素的排版**：竖线分隔符、下拉三角、价格标签等细节
+
+如果你正在学习前端，建议找一个你喜欢的真实网站，尝试**纯 HTML/CSS 复刻**——这是提升布局能力最快的方式。
+
+---
+
+> 完整源码见 `/TheCar/` 目录，在线预览：[CarsStore Demo](/demos/cars/)

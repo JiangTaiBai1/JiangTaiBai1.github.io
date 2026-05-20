@@ -1,0 +1,515 @@
+@import "tailwindcss";
+
+/* ============================================================
+   Design Tokens — Dark-first (AI company aesthetic)
+   ============================================================ */
+:root {
+  /* Surfaces */
+  --background: #000000;
+  --surface: #0d0d0d;
+  --surface-raised: #161616;
+
+  /* Text */
+  --foreground: #ffffff;
+  --muted-foreground: rgba(255, 255, 255, 0.45);
+
+  /* Borders */
+  --border: rgba(255, 255, 255, 0.07);
+  --border-hover: rgba(255, 255, 255, 0.15);
+
+  /* Brand */
+  --primary: #a78bfa;
+  --primary-foreground: #000000;
+
+  /* Legacy aliases (used by existing components) */
+  --muted: #0d0d0d;
+  --card: #0d0d0d;
+  --card-foreground: #ffffff;
+  --accent: #161616;
+  --accent-foreground: #ffffff;
+
+  /* Gradient accent */
+  --grad-1: #a78bfa;
+  --grad-2: #60a5fa;
+  --grad-3: #34d399;
+
+  /* Glow */
+  --glow-purple: rgba(139, 92, 246, 0.28);
+  --glow-blue: rgba(96, 165, 250, 0.20);
+  --glow-green: rgba(52, 211, 153, 0.15);
+}
+
+/* Light theme overrides */
+[data-theme="light"] {
+  --background: #ffffff;
+  --surface: #fafafa;
+  --surface-raised: #f4f4f5;
+  --foreground: #0a0a0a;
+  --muted-foreground: rgba(0, 0, 0, 0.45);
+  --border: rgba(0, 0, 0, 0.07);
+  --border-hover: rgba(0, 0, 0, 0.15);
+  --primary: #7c3aed;
+  --primary-foreground: #ffffff;
+  --muted: #f4f4f5;
+  --card: #ffffff;
+  --card-foreground: #0a0a0a;
+  --accent: #f4f4f5;
+  --accent-foreground: #0a0a0a;
+  --grad-1: #7c3aed;
+  --grad-2: #2563eb;
+  --grad-3: #059669;
+  --glow-purple: rgba(124, 58, 237, 0.22);
+  --glow-blue: rgba(37, 99, 235, 0.16);
+  --glow-green: rgba(5, 150, 105, 0.14);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-surface: var(--surface);
+  --color-surface-raised: var(--surface-raised);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-border: var(--border);
+  --color-border-hover: var(--border-hover);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+/* ============================================================
+   Base
+   ============================================================ */
+* {
+  border-color: var(--border);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans), system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* ============================================================
+   MDX Content — Table Styles
+   ============================================================ */
+.prose table,
+.max-w-none table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.5rem 0;
+  font-size: 0.875rem;
+  line-height: 1.6;
+}
+
+.prose thead,
+.max-w-none thead {
+  border-bottom: 2px solid var(--border);
+}
+
+.prose th,
+.max-w-none th {
+  padding: 0.75rem 1rem;
+  text-align: left;
+  font-weight: 600;
+  color: var(--foreground);
+  background: var(--surface-raised);
+  white-space: nowrap;
+}
+
+.prose td,
+.max-w-none td {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--border);
+  color: var(--muted-foreground);
+}
+
+.prose tr:last-child td,
+.max-w-none tr:last-child td {
+  border-bottom: none;
+}
+
+.prose tbody tr:hover,
+.max-w-none tbody tr:hover {
+  background: var(--surface-raised);
+}
+
+/* Table wrapper for horizontal scroll on mobile */
+.prose .table-wrapper,
+.max-w-none .table-wrapper {
+  overflow-x: auto;
+  border-radius: 0.75rem;
+  border: 1px solid var(--border);
+}
+
+.prose .table-wrapper table,
+.max-w-none .table-wrapper table {
+  margin: 0;
+}
+
+/* ============================================================
+   Gradient Text Utilities
+   ============================================================ */
+.gradient-text {
+  background: linear-gradient(135deg,
+      var(--grad-1) 0%,
+      var(--grad-2) 50%,
+      var(--grad-3) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Dark: white → dimmed-white; Light: black → dimmed-black */
+.gradient-heading {
+  background: linear-gradient(180deg,
+      var(--foreground) 0%,
+      color-mix(in srgb, var(--foreground) 55%, transparent) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ============================================================
+   Glass & Card Effects
+   ============================================================ */
+.glass-nav {
+  background: color-mix(in srgb, var(--surface) 70%, transparent);
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  border: 1px solid var(--border);
+}
+
+.glass-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  transition: border-color 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.glass-card:hover {
+  border-color: var(--border-hover);
+  transform: translateY(-3px);
+  box-shadow:
+    0 24px 64px rgba(0, 0, 0, 0.4),
+    0 0 0 1px var(--border-hover);
+}
+
+/* Gradient border on hover via pseudo-element */
+.grad-border-card {
+  position: relative;
+  background: var(--surface);
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  transition: border-color 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease;
+  overflow: hidden;
+}
+
+.grad-border-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 12px;
+  background: linear-gradient(135deg,
+      rgba(167, 139, 250, 0.1) 0%,
+      rgba(96, 165, 250, 0.05) 50%,
+      transparent 70%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+.grad-border-card:hover {
+  border-color: var(--border-hover);
+  transform: translateY(-3px);
+  box-shadow:
+    0 20px 60px rgba(0, 0, 0, 0.35),
+    0 0 0 1px rgba(167, 139, 250, 0.15);
+}
+
+.grad-border-card:hover::after {
+  opacity: 1;
+}
+
+/* ============================================================
+   Ambient Background
+   ============================================================ */
+.bg-dots {
+  background-image: radial-gradient(circle,
+      rgba(255, 255, 255, 0.06) 1px,
+      transparent 1px);
+  background-size: 28px 28px;
+}
+
+[data-theme="light"] .bg-dots {
+  background-image: radial-gradient(circle,
+      rgba(0, 0, 0, 0.06) 1px,
+      transparent 1px);
+}
+
+.glow-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(90px);
+  pointer-events: none;
+}
+
+/* Aurora bar — hero bottom rainbow glow like GitHub Copilot page */
+.aurora-bar {
+  position: absolute;
+  bottom: -60px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 130%;
+  height: 220px;
+  background: linear-gradient(90deg,
+      rgba(139, 92, 246, 0) 0%,
+      rgba(139, 92, 246, 0.55) 18%,
+      rgba(59, 130, 246, 0.65) 36%,
+      rgba(16, 185, 129, 0.55) 54%,
+      rgba(59, 130, 246, 0.45) 72%,
+      rgba(139, 92, 246, 0.35) 86%,
+      rgba(139, 92, 246, 0) 100%);
+  filter: blur(55px);
+  border-radius: 50%;
+  pointer-events: none;
+  animation: aurora-shift 8s ease-in-out infinite alternate;
+  z-index: 1;
+}
+
+[data-theme="light"] .aurora-bar {
+  background: linear-gradient(90deg,
+      rgba(124, 58, 237, 0) 0%,
+      rgba(124, 58, 237, 0.35) 18%,
+      rgba(37, 99, 235, 0.45) 36%,
+      rgba(5, 150, 105, 0.35) 54%,
+      rgba(37, 99, 235, 0.30) 72%,
+      rgba(124, 58, 237, 0.25) 86%,
+      rgba(124, 58, 237, 0) 100%);
+  filter: blur(48px);
+  opacity: 0.9;
+}
+
+/* ============================================================
+   Scrollbar
+   ============================================================ */
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-hover);
+  border-radius: 999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--muted-foreground);
+}
+
+/* ============================================================
+   Selection
+   ============================================================ */
+::selection {
+  background: rgba(167, 139, 250, 0.25);
+  color: var(--foreground);
+}
+
+/* ============================================================
+   Animations
+   ============================================================ */
+@keyframes pulse-glow {
+
+  0%,
+  100% {
+    opacity: 0.5;
+    transform: scale(1);
+  }
+
+  50% {
+    opacity: 0.9;
+    transform: scale(1.05);
+  }
+}
+
+@keyframes aurora-shift {
+  0% {
+    transform: translateX(-50%) scaleX(1) scaleY(1);
+    opacity: 0.85;
+  }
+
+  33% {
+    transform: translateX(-48%) scaleX(1.08) scaleY(1.15);
+    opacity: 1;
+  }
+
+  66% {
+    transform: translateX(-52%) scaleX(0.95) scaleY(0.9);
+    opacity: 0.9;
+  }
+
+  100% {
+    transform: translateX(-50%) scaleX(1.04) scaleY(1.08);
+    opacity: 0.88;
+  }
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes scale-in {
+  from {
+    opacity: 0;
+    transform: scale(0.93);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% center;
+  }
+
+  100% {
+    background-position: 200% center;
+  }
+}
+
+@keyframes float {
+
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+@keyframes slide-right {
+  from {
+    opacity: 0;
+    transform: translateX(-14px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* ── Entrance (fill-mode: both → starts hidden until delay fires) ── */
+.animate-pulse-glow {
+  animation: pulse-glow 6s ease-in-out infinite;
+}
+
+.animate-fade-up {
+  animation: fade-up 0.65s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.animate-fade-in {
+  animation: fade-in 0.5s ease both;
+}
+
+.animate-scale-in {
+  animation: scale-in 0.55s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.animate-float {
+  animation: float 4s ease-in-out infinite;
+}
+
+.animate-slide-right {
+  animation: slide-right 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* Shimmer gradient text */
+.animate-shimmer {
+  background: linear-gradient(90deg,
+      var(--grad-1) 0%,
+      var(--grad-2) 40%,
+      var(--grad-3) 60%,
+      var(--grad-1) 100%);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: shimmer 3s linear infinite;
+}
+
+/* Stagger delay helpers */
+.delay-0 {
+  animation-delay: 0ms;
+}
+
+.delay-100 {
+  animation-delay: 100ms;
+}
+
+.delay-150 {
+  animation-delay: 150ms;
+}
+
+.delay-200 {
+  animation-delay: 200ms;
+}
+
+.delay-300 {
+  animation-delay: 300ms;
+}
+
+.delay-400 {
+  animation-delay: 400ms;
+}
+
+.delay-500 {
+  animation-delay: 500ms;
+}
+
+.delay-600 {
+  animation-delay: 600ms;
+}
+
+.delay-700 {
+  animation-delay: 700ms;
+}
+
+.delay-800 {
+  animation-delay: 800ms;
+}

@@ -1,0 +1,56 @@
+---
+title: "React 19 新特性深度解析：Actions、use() 与并发特性"
+date: "2026-03-25"
+description: "全面解读 React 19 的核心新特性，包括 Actions、use() Hook、Document Metadata 等，并结合实际案例说明如何在项目中应用。"
+tags: ["React", "JavaScript", "前端"]
+cover: "/images/posts/react19.svg"
+---
+
+## React 19 重大更新
+
+React 19 是近年来最重要的版本之一，带来了一系列改变开发方式的新特性。
+
+## Actions
+
+Actions 是 React 19 中最重要的新概念，它简化了异步状态更新的处理：
+
+```tsx
+function UpdateName() {
+  const [error, submitAction, isPending] = useActionState(
+    async (previousState, formData) => {
+      const error = await updateName(formData.get("name"));
+      if (error) return error;
+      redirect("/profile");
+      return null;
+    },
+    null,
+  );
+
+  return (
+    <form action={submitAction}>
+      <input type="text" name="name" />
+      <button type="submit" disabled={isPending}>
+        Update
+      </button>
+      {error && <p>{error}</p>}
+    </form>
+  );
+}
+```
+
+## use() Hook
+
+`use()` 是一个全新的 API，允许在渲染时读取资源：
+
+```tsx
+import { use } from "react";
+
+function Comments({ commentsPromise }) {
+  const comments = use(commentsPromise);
+  return comments.map((comment) => <p key={comment.id}>{comment}</p>);
+}
+```
+
+## 结论
+
+React 19 的这些新特性大幅简化了异步操作的处理，推荐尽早在项目中采用。

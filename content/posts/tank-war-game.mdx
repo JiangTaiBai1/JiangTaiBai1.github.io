@@ -1,0 +1,257 @@
+---
+title: "原生 JavaScript 实现坦克大战：从零构建 2D 射击游戏"
+date: "2026-05-20"
+description: "使用原生 HTML/CSS/JavaScript 从零构建一款完整的坦克大战游戏，深入解析面向对象游戏设计、requestAnimationFrame 动画循环、键盘事件处理与碰撞检测等核心技术。"
+tags: ["JavaScript", "Canvas", "游戏开发", "面向对象", "动画"]
+cover: "/images/posts/tank-war-cover.svg"
+relatedProjects: ["tank-battle"]
+---
+
+# 原生 JavaScript 实现坦克大战：从零构建 2D 射击游戏
+
+很多前端开发者都玩过经典的坦克大战（Battle City），但有多少人尝试过自己实现一个？本文记录了我用**纯原生 HTML/CSS/JavaScript**（不依赖任何游戏引擎或 Canvas）构建一个完整的坦克移动射击游戏的全过程。
+
+> 在线试玩：[坦克大战 Demo](/demos/tank/)
+
+## 项目概览
+
+| 特性 | 实现方式 |
+| :--- | :--- |
+| 坦克移动 | 方向键控制，三角函数计算位移 |
+| 旋转系统 | CSS `transform: rotate()` |
+| 子弹发射 | `requestAnimationFrame` 动画循环 |
+| 加速机制 | Shift 键切换速度倍率 |
+| 敌人 AI | 定时生成，向玩家坦克追踪移动 |
+| 边界检测 | 窗口宽高限制 + 坦克尺寸偏移 |
+
+## 核心架构：面向对象的游戏设计
+
+整个游戏核心由三个类构成：
+
+```
+┌──────────────┐    ┌──────────────┐    ┌──────────────┐
+│    Tank      │    │    Bullet    │    │    Enemy     │
+│──────────────│    │──────────────│    │──────────────│
+│ x, y         │    │ x, y         │    │ x, y         │
+│ rotation     │    │ speed        │    │ speed        │
+│ speed        │    │ direction    │    │ element      │
+│ bullets[]    │    │ element      │    │              │
+│──────────────│    │──────────────│    │──────────────│
+│ moveForward()│    │ updatePos()  │    │ moveToward() │
+│ rotateLeft() │    │ animate()    │    │ updatePos()  │
+│ fireBullet() │    │              │    │              │
+└──────────────┘    └──────────────┘    └──────────────┘
+```
+
+### Tank 类：游戏主角
+
+```javascript
+class Tank {
+    constructor(element) {
+        this.element = element;
+        this.x = 50;
+        this.y = window.innerHeight / 2;
+        this.speed = 2;
+        this.baseSpeed = 2;
+        this.boostSpeed = 4;
+        this.rotation = 0;
+        this.bullets = [];
+        this.isSpacePressed = false;
+        this.bulletInterval = null;
+        this.updatePosition();
+    }
+}
+```
+
+#### 移动系统：三角函数驱动的精确位移
+
+坦克的前进/后退并非简单的 `x++` 或 `y--`，而是需要根据**当前旋转角度**计算位移分量：
+
+```javascript
+moveForward() {
+    const rad = this.rotation * Math.PI / 180;  // 角度 → 弧度
+    const newX = this.x + Math.sin(rad) * this.speed;
+    const newY = this.y - Math.cos(rad) * this.speed;  // 屏幕坐标系 Y 轴向下
+    this.checkBoundaries(newX, newY);
+}
+```
+
+关键点：
+- **`Math.sin(rad)`** 计算 X 轴分量（角度 0° 时 sin(0)=0，坦克无横向移动）
+- **`Math.cos(rad)`** 计算 Y 轴分量（角度 0° 时 cos(0)=1，坦克向上移动）
+- 屏幕坐标系 Y 轴正方向向下，所以 `newY` 用**减法**
+
+### 子弹系统：Fire-and-Forget 模式
+
+子弹是游戏中最高频创建和销毁的对象。我采用了**自驱动动画**模式——每个子弹实例自己负责生命周期管理：
+
+```javascript
+fireBullet() {
+    const bullet = document.createElement('div');
+    bullet.className = 'bullet';
+    document.getElementById('game-container').appendChild(bullet);
+
+    const bulletObj = {
+        element: bullet,
+        x: this.x + 30,     // 从坦克中心发射
+        y: this.y + 30,
+        speed: 8,
+        direction: this.rotation
+    };
+
+    this.bullets.push(bulletObj);
+    this.updateBulletPosition(bulletObj);
+}
+```
+
+#### requestAnimationFrame 动画循环
+
+每个子弹独立运行一个递归的 `animate` 函数，通过 `requestAnimationFrame` 实现 60fps 的平滑运动：
+
+```javascript
+updateBulletPosition(bullet) {
+    const animate = () => {
+        const rad = bullet.direction * Math.PI / 180;
+        bullet.x += Math.sin(rad) * bullet.speed;
+        bullet.y -= Math.cos(rad) * bullet.speed;
+
+        // 超出边界 → 自我销毁
+        if (bullet.x < -20 || bullet.x > window.innerWidth ||
+            bullet.y < -20 || bullet.y > window.innerHeight) {
+            bullet.element.remove();
+            this.bullets = this.bullets.filter(b => b !== bullet);
+            return;   // 停止递归
+        }
+
+        bullet.element.style.left = `${bullet.x}px`;
+        bullet.element.style.top = `${bullet.y}px`;
+        bullet.element.style.transform = `rotate(${bullet.direction}deg)`;
+        requestAnimationFrame(animate);
+    };
+    animate();
+}
+```
+
+**为什么不用 `setInterval`？** 游戏循环用 `setInterval(fn, 16)` 模拟 60fps 可以，但子弹的飞行轨迹需要更精确的帧同步，`requestAnimationFrame` 能：
+- 跟随显示器刷新率自动适配帧率
+- 页面不可见时自动暂停，节省资源
+- 避免 `setInterval` 的累积误差
+
+## 键盘输入系统
+
+使用一个 `keys` 对象记录按键状态，然后用统一的游戏循环轮询：
+
+```javascript
+const keys = {};
+window.addEventListener('keydown', (e) => {
+    keys[e.code] = true;
+    if (e.code === 'Space') {
+        e.preventDefault();  // 阻止页面滚动
+        if (!tank.isSpacePressed) {
+            tank.isSpacePressed = true;
+            tank.fireBullet();
+            tank.bulletInterval = setInterval(() => tank.fireBullet(), 200);
+        }
+    }
+});
+
+window.addEventListener('keyup', (e) => {
+    keys[e.code] = false;
+    if (e.code === 'Shift') tank.speed = tank.baseSpeed;
+    if (e.code === 'Space') {
+        tank.isSpacePressed = false;
+        clearInterval(tank.bulletInterval);
+    }
+});
+
+// 游戏主循环 — 约 60fps
+setInterval(() => {
+    if (keys['ArrowUp'])    tank.moveForward();
+    if (keys['ArrowDown'])  tank.moveBackward();
+    if (keys['ArrowLeft'])  tank.rotateLeft();
+    if (keys['ArrowRight']) tank.rotateRight();
+    if (keys['ShiftLeft'] || keys['ShiftRight'])
+        tank.speed = tank.boostSpeed;
+}, 16);
+```
+
+### 设计要点
+
+| 问题 | 解决方案 |
+| :--- | :--- |
+| 长按空格连续发射 | `isSpacePressed` 标记 + `setInterval` 200ms 间隔 |
+| 同时按多键 | `keys` 对象记录所有按键，主循环轮询 |
+| 松开 Shift 恢复速度 | `keyup` 事件中重置 `speed = baseSpeed` |
+| 空格导致页面滚动 | `e.preventDefault()` 阻止默认行为 |
+| 左右 Shift 兼容 | 同时检测 `ShiftLeft` 和 `ShiftRight` |
+
+## 敌人 AI：简单但有效的追踪逻辑
+
+Enemy 类实现了一个基础追踪 AI——每一帧计算与玩家的距离并朝玩家方向移动：
+
+```javascript
+class Enemy {
+    moveToward(tankX, tankY) {
+        const dx = tankX - this.x;
+        const dy = tankY - this.y;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+        // 归一化方向向量，等速移动
+        this.x += (dx / distance) * this.speed;
+        this.y += (dy / distance) * this.speed;
+        this.updatePosition();
+    }
+}
+```
+
+核心算法：**方向向量归一化**。通过 `dx/distance` 和 `dy/distance` 将方向向量缩放到单位长度，确保敌人在任何方向上都以相同速度移动。
+
+## 视觉与 UX 细节
+
+### CSS 实现
+
+坦克和子弹的旋转全部通过 CSS transform 完成，不依赖 Canvas：
+
+```css
+#tank {
+    position: absolute;
+    width: 60px;
+    height: 60px;
+    transition: transform 0.2s;     /* 旋转平滑过渡 */
+    transform-origin: center;        /* 以中心为旋转轴 */
+}
+
+.bullet {
+    position: absolute;
+    width: 20px;
+    height: 10px;
+    background-image: url('/坦克移动/img/zidan.png');
+}
+```
+
+### 操作提示淡出
+
+游戏开始 10 秒后，操作指引自动淡出，不干扰游戏体验：
+
+```javascript
+setTimeout(() => {
+    document.getElementById('instructions').style.opacity = '0';
+    setTimeout(() => {
+        document.getElementById('instructions').style.display = 'none';
+    }, 1000);  // 等待 CSS transition 完成
+}, 10000);
+```
+
+## 技术总结
+
+这个项目虽然代码量不大（核心约 200 行），但涵盖了游戏开发中的多个关键概念：
+
+1. **面向对象设计**：Tank、Bullet、Enemy 各司其职，职责清晰
+2. **三角函数应用**：旋转角度与位移分量的转换是 2D 游戏的基础
+3. **动画循环**：`requestAnimationFrame` vs `setInterval` 的选择
+4. **输入处理**：多键同时按下、长按连发、按键防抖
+5. **资源管理**：子弹超出边界后的 DOM 移除与数组过滤
+6. **CSS 动画**：用 `transform: rotate()` 替代 Canvas 实现旋转
+
+---
+
+> 完整源码见项目 `/TankWar/` 目录，或在线体验 [Demo](/demos/tank/)。如果你也想从零开始做一款小游戏，不妨先从坦克大战入手——它足够简单，又足够有趣。

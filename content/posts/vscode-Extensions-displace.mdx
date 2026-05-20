@@ -1,0 +1,253 @@
+---
+title: "VSCode 搬家血泪史：从快捷方式报错到目录链接权限问题，一次完整的排错记录"
+date: "2026-05-18"
+description: "为了将 VSCode 插件目录从 C 盘迁移到 D 盘，我踩了快捷方式参数、网络重置、注册表残留、mklink 权限等一系列坑。这篇文章记录了完整的排错过程与解决方案。"
+tags: ["VSCode", "Windows", "环境配置", "mklink", "排错"]
+cover: "/images/posts/vscode-Extensions-displace-cover.png"
+---
+
+# VSCode 搬家血泪史：从快捷方式报错到目录链接权限问题
+
+作为一个经常折腾开发环境的人，我一直希望把 IDE 的插件、缓存等目录从 C 盘移走。最近重装系统后，我决定对 VSCode 进行“搬家”——将插件目录从 `%USERPROFILE%\.vscode\extensions` 迁移到 D 盘。
+
+没想到，这个看似简单的过程却引发了一连串的问题：从快捷方式报错、网络连接重置，到目录链接创建失败……这篇文章就是完整的排错记录，希望能帮助遇到类似问题的同学少走弯路。
+
+## 第一阶段：快捷方式参数错误
+
+### 问题描述
+
+为了给 VSCode 指定自定义插件目录，我在快捷方式的“目标”中填写了以下内容：
+
+```
+"D:\Program_Files\Microsoft VS Code\Code.exe"--extensions-dir "D:\VSCode\Extensions"
+```
+
+结果弹出错误提示：
+
+> “目标”框中指定的名称无效。请确定路径和文件名是否正确。
+
+![错误提示](/images/posts/vscode-Extensions-displace1.png)
+
+### 原因分析
+
+错误原因非常低级但容易被忽略：**程序路径和参数之间缺少空格**。
+
+Windows 解析快捷方式时，会将整个字符串视为一个整体去查找文件。由于 `Code.exe"--extensions-dir` 之间没有空格，系统把 `--extensions-dir` 当成了文件名的一部分，自然找不到。
+
+### 解决方案
+
+正确的格式应该是：**路径和参数之间用空格分隔**。
+
+```
+"D:\Program Files\Microsoft VS Code\Code.exe" --extensions-dir "D:\VSCode\Extensions"
+```
+
+另外注意：
+- 如果路径中包含空格（比如 `Program Files`），整个路径需要用双引号包裹。
+- 如果路径中没有空格，可以省略双引号（但建议始终加上，保持统一）。
+
+### 经验教训
+
+不要想当然地认为系统能智能解析参数。Windows 快捷方式的“目标”解析非常机械：**第一个双引号内的内容是程序路径，后面空格后的内容才是参数**。
+
+---
+
+## 第二阶段：VSCode 自动更新失败
+
+### 问题描述
+
+配置好自定义插件目录后，VSCode 提示有更新可用。点击更新后，弹出错误：
+
+> 无法写入文件 `c:\Users\江太白\AppData\Local\Temp\...\CodeSetup-xxx.exe.tmp` (Error: `net::ERR_CONNECTION_RESET`)
+
+### 原因分析
+
+`ERR_CONNECTION_RESET` 是一个典型的网络层错误，表示 TCP 连接被中间节点（防火墙、路由器、代理服务器）主动重置了。在中国大陆直连微软服务器的情况下尤其常见，可能的原因包括：
+
+- 网络不稳定，下载过程中断。
+- VSCode 不读取系统代理设置，导致代理工具失效。
+- 防火墙或杀毒软件拦截了下载请求。
+- DNS 污染导致连接到了错误的服务器。
+
+### 背景知识：VSCode 数据存放位置
+
+VSCode 三种数据是分开存放的，各自有默认路径：
+
+| 数据类型 | 默认路径 (Windows) | 说明 |
+| :--- | :--- | :--- |
+| 程序本体 | `C:\Program Files\Microsoft VS Code\` | 一般不要移动，移动会导致快捷方式、右键菜单和自动更新失效 |
+| 用户数据 | `%APPDATA%\Code\` | 包含设置、主题、快捷键等 |
+| 插件 & 缓存 | `%USERPROFILE%\.vscode\extensions\` | 这就是你想迁移的部分 |
+
+VSCode 正在下载的更新文件其实临时存放在系统盘的 `%TEMP%` 目录下，这个是改不了的。
+
+### 解决方案
+
+#### 方法一：手动下载安装包覆盖（最稳妥）
+
+既然内置更新很慢，最简单粗暴且有效的方法就是从国内镜像站手动下载最新安装包，然后直接覆盖安装。
+
+1. 访问国内镜像站，例如清华大学镜像站（已失效，可换用中科大或官方下载）。
+2. 找到适合你系统的 `.exe` 安装包下载。
+3. 下载完成后，直接双击运行，它会自动覆盖安装到原来的位置（通常是 `C:\Program Files`），并且你所有的插件、配置和打开的文件都会完好无损地保留。
+
+![错误提示](/images/posts/vscode-Extensions-displace2.png)
+
+#### 方法二：修复 VSCode “搬家” 问题（治本）
+
+你移动了 VSCode 程序本体后，可能会导致很多功能异常。最彻底的方法是修复程序路径：
+
+1. **重装 VSCode**：去官网下载最新安装包，直接运行安装。它会自动覆盖并修复所有注册表和快捷方式，把 VSCode “带回” 到正确的默认路径（`C:\Program Files`）。
+2. **重新配置插件目录**：重装后，再按之前讨论的 `--extensions-dir` 参数，通过快捷方式或注册表，正确地为你庞大无比的插件目录“搬家”。
+
+### 意外状况：安装时直接报错
+
+按照上述方法重装时，安装程序报错，提示与之前 F 盘的路径有关（因为我之前将 VSCode 安装在了 F 盘，注册表中残留了旧路径）。
+
+#### 解决方法：修改注册表
+
+1. 按 `Win + R`，输入 `regedit`，回车打开注册表编辑器。
+2. 导航到以下路径：
+   ```
+   HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Uninstall\{771FD6B0-FA20-440A-A002-3B3BAC16DC50}_is1
+   ```
+   > 注意：`{...}_is1` 是 VSCode 安装程序对应的卸载 GUID，不同版本可能略有不同，可以搜索 `Visual Studio Code` 关键字找到。
+3. 找到所有关于之前 F 盘路径的选项，双击将它们全部改成当前的 D 盘路径。
+4. 修改完成后，原来的vscode就可以使用了，并且可以直接更新到最新版本。
+
+![错误提示](/images/posts/vscode-Extensions-displace3.png)
+
+---
+
+## 第三阶段：迁移插件目录到 D 盘（mklink）
+
+### 问题描述
+
+我希望将 VSCode 的插件目录从 C 盘迁移到 D 盘，使用 `mklink` 创建目录链接。
+
+首先执行复制命令（将现有插件备份到 D 盘）：
+
+```cmd
+xcopy "C:\Users\江太白\.vscode\extensions" "D:\VSCode\Extensions" /E /H /C /I
+```
+
+然后执行：
+
+```cmd
+mklink /D "C:\Users\江太白\.vscode\extensions" "D:\VSCode\Extensions"
+```
+
+结果遇到两个错误：
+1. `当文件已存在时，无法创建该文件。`
+
+![错误提示](/images/posts/vscode-Extensions-displace5.png)
+
+2. 后续再次执行时提示 `你没有足够的权限执行此操作。`
+
+![错误提示](/images/posts/vscode-Extensions-displace6.png)
+
+### 排错过程
+
+#### 第一步：检查目标路径状态
+
+执行 `dir "C:\Users\江太白\.vscode" /a` 查看目录内容：
+
+![错误提示](/images/posts/vscode-Extensions-displace7.png)
+
+发现 `extensions` 文件夹已不存在（之前已被重命名为 `extensions_backup`），这解释了为什么 `ren` 和 `rmdir` 都报“找不到文件”。但 `mklink` 却报“文件已存在”——这个矛盾可能是因为之前创建过失败的链接残留，或者 `.vscode` 目录本身权限异常。
+
+#### 第二步：解决权限问题
+
+`mklink` 报“没有足够的权限”是因为 CMD **未以管理员身份运行**。符号链接的创建需要管理员权限。
+
+**正确做法**：
+- 按 `Win + X`，选择 **Windows PowerShell (管理员)** 或 **终端 (管理员)**。
+- 在 PowerShell 中执行 `mklink` 需要加上 `cmd /c` 前缀：
+
+```powershell
+cmd /c mklink /D "C:\Users\江太白\.vscode\extensions" "D:\VSCode\Extensions"
+```
+
+![错误提示](/images/posts/vscode-Extensions-displace8.png)
+
+或者使用目录联接 `/J`（在某些环境下兼容性更好）：
+
+```powershell
+cmd /c mklink /J "C:\Users\江太白\.vscode\extensions" "D:\VSCode\Extensions"
+```
+
+### 最终成功的完整流程
+
+1. **以管理员身份打开 PowerShell**（`Win + X` → 终端(管理员)）。
+
+2. **确保 D 盘目标目录存在**：
+
+   ```powershell
+   mkdir D:\VSCode\Extensions -Force
+   ```
+
+3. **清理可能存在的残留占位符**：
+
+   ```powershell
+   if (Test-Path "C:\Users\江太白\.vscode\extensions") {
+       Remove-Item "C:\Users\江太白\.vscode\extensions" -Force -Recurse
+   }
+   ```
+
+4. **创建目录联接**：
+
+   ```powershell
+   cmd /c mklink /J "C:\Users\江太白\.vscode\extensions" "D:\VSCode\Extensions"
+   ```
+
+5. **复制备份的插件到 D 盘**（如果有 `extensions_backup`）：
+
+   ```cmd
+   xcopy "C:\Users\江太白\.vscode\extensions_backup" "D:\VSCode\Extensions" /E /H /C /I /Y
+   ```
+
+6. **验证链接创建成功**：
+
+   ```cmd
+   dir "C:\Users\江太白\.vscode" /a
+   ```
+
+   应该看到 `extensions` 带有 `<JUNCTION>` 标记。
+
+   ![错误提示](/images/posts/vscode-Extensions-displace9.png)
+
+7. **启动 VSCode**，确认插件正常加载后，删除备份：
+
+   ```powershell
+   Remove-Item "C:\Users\江太白\.vscode\extensions_backup" -Force -Recurse
+   ```
+
+   ![错误提示](/images/posts/vscode-Extensions-displace4.png)
+
+---
+
+## 总结与建议
+
+### 快捷方式配置
+- 程序路径和参数之间**必须有空格**。
+- 路径包含空格时必须用双引号包裹。
+- 格式：`"程序路径" 参数1 参数2`
+
+### VSCode 更新失败
+- `ERR_CONNECTION_RESET` 是网络问题，不是权限问题。
+- VSCode 不读取系统代理，需要单独配置 `http.proxy`。
+- 如果各种方法都无效，**手动下载安装包覆盖安装**是最简单直接的方式。
+
+### 目录迁移（mklink）
+- **必须以管理员身份运行** CMD 或 PowerShell。
+- 创建链接前，目标路径（C 盘原位置）必须**不存在**。
+- 备份原文件夹后再删除，防止数据丢失。
+- 使用 `/J`（目录联接）比 `/D`（符号链接）在某些环境下兼容性更好。
+- 在 PowerShell 中执行 `mklink` 需要加 `cmd /c` 前缀。
+
+### 通用建议
+- 操作前**关闭 VSCode**，避免文件被占用。
+- 每一步操作后都进行验证，不要一次性执行多个命令。
+- **重要数据先备份**，不要图省事直接删除。
+
+折腾环境的过程虽然痛苦，但每解决一个问题，都会对 Windows 和 VSCode 的底层机制多一分理解。希望这篇血泪史能帮你少走一些弯路。如果你也遇到了类似的问题，欢迎留言交流。

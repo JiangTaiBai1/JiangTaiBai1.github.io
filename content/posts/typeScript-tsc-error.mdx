@@ -1,0 +1,153 @@
+---
+title: "Yarn 全局安装 TypeScript 后 tsc 无法识别？手把手教你配置环境变量"
+date: "2026-05-07"
+description: "使用 yarn global add typescript 安装后，执行 tsc 提示‘不是内部或外部命令’？原因在于 Yarn 的全局 bin 目录未加入 PATH。本文详细记录了从错误尝试到正确配置的完整过程。"
+tags: ["Yarn", "TypeScript", "环境变量", "Node.js", "前端工具"]
+cover: "/images/posts/TypeScript-tsc-error-cover.png"
+---
+
+# Yarn 全局安装 TypeScript 后 `tsc` 无法识别？手把手教你配置环境变量
+
+## 问题起源
+
+我想用 Yarn 全局安装 TypeScript，于是执行了：
+
+```bash
+yarn install -g typescript
+```
+
+结果 Yarn 报错：
+
+```
+error `--global` has been deprecated. Please run "yarn global add typescript" instead.
+```
+
+原来 `yarn install -g` 已经不推荐使用了，正确的全局添加命令是 `yarn global add`。
+
+## 第一次尝试：错误地使用了 `-global`
+
+我自作聪明地改成了：
+
+```bash
+yarn install -global typescript
+```
+
+这个命令虽然运行成功（生成了 lockfile），但并没有真正把 TypeScript 安装到全局可用的位置。实际上 `-global` 被当成了一个普通包名，而不是参数。所以后续执行 `tsc` 依然失败。
+
+## 第二次尝试：按照提示正确安装
+
+正确做法是：
+
+```bash
+yarn global add typescript
+```
+
+安装完成后，我兴奋地执行：
+
+```bash
+tsc --version
+```
+
+结果却出现了熟悉的报错：
+
+```
+'tsc' 不是内部或外部命令，也不是可运行的程序或批处理文件。
+```
+
+## 问题定位：Yarn 的全局 bin 目录未加入 PATH
+
+明明 TypeScript 已经全局安装了，为什么系统找不到 `tsc` 命令？  
+因为 Yarn 全局安装的可执行文件（比如 `tsc`、`eslint`、`create-react-app` 等）被放在了一个**特定的 bin 目录**中，而这个目录**并没有被自动添加到系统的环境变量 PATH 里**。
+
+换句话说：`tsc` 这个程序存在，但你的命令行终端不知道去哪里找它。
+
+## 解决方案：找到 Yarn 的 bin 目录并配置 PATH
+
+### 步骤一：定位 Yarn 全局安装的目录
+
+执行以下命令查看 Yarn 的全局安装根目录：
+
+```bash
+yarn global dir
+```
+
+在我的电脑上输出类似：
+
+```
+C:\Users\用户名\AppData\Local\Yarn\Data\global
+```
+
+![定位 Yarn 全局安装的目录](/images/posts/TypeScript-tsc-error.png)
+
+### 步骤二：找到 bin 目录
+
+Yarn 的可执行文件通常存放在 `global\node_modules\.bin` 目录下（Windows）或 `global/bin`（Linux/macOS）。更简单的方式是直接查询 Yarn 的 bin 路径：
+
+```bash
+yarn global bin
+```
+
+输出示例：
+
+```
+C:\Users\江太白\AppData\Local\Yarn\Data\global\node_modules\.bin
+```
+![找到 bin 目录](/images/posts/TypeScript-tsc-error3.png)
+
+> 注意：不同版本的 Yarn 或操作系统，路径可能略有差异。以 `yarn global bin` 输出的结果为准。
+
+### 步骤三：将该路径添加到系统环境变量（Windows）
+
+1. 右键“此电脑” → **属性** → **高级系统设置** → **环境变量**。
+2. 在“用户变量”或“系统变量”中找到 `Path`，双击编辑。
+3. 点击“新建”，粘贴上面得到的 bin 路径（例如 `C:\Users\用户名\AppData\Local\Yarn\Data\global\node_modules\.bin`）。
+4. 点击“确定”保存所有窗口。
+
+![找到 bin 目录](/images/posts/TypeScript-tsc-error4.png)
+
+> 如果不想通过图形界面操作，也可以在命令行中临时添加（仅对当前窗口有效）：
+> ```bash
+> set PATH=%PATH%;C:\Users\江太白\AppData\Local\Yarn\Data\global\node_modules\.bin
+> ```
+> 但为了永久生效，建议使用环境变量设置。
+
+### 步骤四：重新打开终端，验证 `tsc`
+
+关闭当前命令提示符或 PowerShell，重新打开一个新终端，然后执行：
+
+```bash
+tsc --version
+```
+
+如果看到类似 `Version 5.8.2` 的输出，说明配置成功！
+
+![找到 bin 目录](/images/posts/TypeScript-tsc-error5.png)
+
+## 扩展知识：为什么需要配置 PATH？
+
+环境变量 `PATH` 是操作系统用来查找可执行文件的“搜索路径列表”。当你输入 `tsc` 时，系统会依次在 PATH 中列出的每一个文件夹里寻找 `tsc.exe`（或 `tsc`）文件。只要 bin 目录在 PATH 中，系统就能找到它。
+
+Yarn 和 npm 的区别在于：
+- **npm** 全局安装时，会自动将 bin 目录添加到 PATH（通常在安装 Node.js 时完成）。
+- **Yarn** 默认不会自动修改系统 PATH，因此需要用户手动添加一次。
+
+## 完整排查清单（供日后参考）
+
+- ✅ 使用正确命令：`yarn global add <package>`
+- ✅ 确认安装成功：`yarn global list` 会列出已安装的全局包
+- ✅ 找到 bin 目录：`yarn global bin`
+- ✅ 将 bin 目录加入 PATH
+- ✅ 重新打开终端测试
+
+## 总结
+
+不要被 `yarn install -g` 的提示迷惑，请记住：
+
+- **安装**：`yarn global add typescript`
+- **卸载**：`yarn global remove typescript`
+- **查看 bin 路径**：`yarn global bin`
+- **查看全局目录**：`yarn global dir`
+
+大多数“命令找不到”的问题，本质上都是 PATH 配置缺失。搞定这一步，以后再用 Yarn 全局安装任何 CLI 工具（如 `create-react-app`、`vue-cli`、`nest` 等）都不会再踩坑。
+
+> 本文由一次真实的踩坑经历整理而成。如果你也遇到了相同的问题，希望这篇笔记能帮你快速解决。

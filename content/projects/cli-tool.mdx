@@ -1,0 +1,36 @@
+---
+title: "CLI 代码质量工具"
+description: "Node.js 命令行工具，自动化代码审查、依赖安全扫描和性能分析，已发布至 npm 并获 500+ 星。"
+category: "tool"
+tags: ["Node.js", "CLI", "TypeScript", "npm", "开源"]
+cover: "/images/projects/cli-tool.svg"
+repoUrl: "https://github.com/example/code-quality-cli"
+date: "2025-06-20"
+featured: true
+---
+
+## 工具介绍
+
+一个面向前端开发者的 CLI 工具，集成代码质量检查、安全扫描和性能分析。
+
+## 安装使用
+
+```bash
+npm install -g code-quality-cli
+
+# 扫描当前项目
+cq scan
+
+# 检查依赖安全
+cq audit
+
+# 生成报告
+cq report --format html
+```
+
+## 功能特性
+
+- **ESLint 集成**：自定义规则集
+- **依赖扫描**：基于 OSV 数据库
+- **性能分析**：Bundle 大小分析
+- **CI/CD 集成**：支持 GitHub Actions

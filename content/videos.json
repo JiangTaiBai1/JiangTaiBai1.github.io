@@ -1,0 +1,136 @@
+{
+    "videos": [
+        {
+            "id": "nextjs-tutorial-01",
+            "title": "Next.js 15 完整教程 - 从零构建全栈应用",
+            "description": "本期视频从零开始，手把手带你用 Next.js 15 构建一个完整的全栈应用，覆盖 App Router、Server Actions、数据库集成和部署上线。",
+            "platform": "youtube",
+            "videoId": "dQw4w9WgXcQ",
+            "cover": "",
+            "duration": "2:34:00",
+            "date": "2026-03-20",
+            "tags": [
+                "Next.js",
+                "React",
+                "全栈"
+            ],
+            "timestamps": [
+                {
+                    "time": "00:00",
+                    "label": "课程介绍与环境准备"
+                },
+                {
+                    "time": "05:30",
+                    "label": "项目初始化与目录结构"
+                },
+                {
+                    "time": "20:00",
+                    "label": "App Router 核心概念"
+                },
+                {
+                    "time": "55:00",
+                    "label": "数据库集成（PostgreSQL + Prisma）"
+                },
+                {
+                    "time": "1:30:00",
+                    "label": "Server Actions 实战"
+                },
+                {
+                    "time": "2:10:00",
+                    "label": "部署到 Vercel"
+                }
+            ],
+            "relatedPost": "nextjs-personal-website",
+            "resources": [
+                {
+                    "label": "课程源码",
+                    "url": "https://github.com/example/nextjs-tutorial"
+                },
+                {
+                    "label": "配套 PPT",
+                    "url": "https://example.com/slides.pdf"
+                }
+            ]
+        },
+        {
+            "id": "react19-deep-dive",
+            "title": "React 19 新特性深度解析 - Actions、use() 与并发渲染",
+            "description": "全面解读 React 19 的核心更新，包括 Actions 模型、use() Hook、Document Metadata 内置支持，以及如何在现有项目中平滑升级。",
+            "platform": "bilibili",
+            "videoId": "BV1xx411c7mD",
+            "cover": "",
+            "duration": "1:12:00",
+            "date": "2026-02-28",
+            "tags": [
+                "React",
+                "JavaScript",
+                "前端"
+            ],
+            "timestamps": [
+                {
+                    "time": "00:00",
+                    "label": "React 19 整体变化概览"
+                },
+                {
+                    "time": "08:00",
+                    "label": "Actions 详解"
+                },
+                {
+                    "time": "30:00",
+                    "label": "use() Hook 实战"
+                },
+                {
+                    "time": "50:00",
+                    "label": "升级迁移指南"
+                }
+            ],
+            "relatedPost": "react19-new-features",
+            "resources": [
+                {
+                    "label": "示例代码",
+                    "url": "https://github.com/example/react19-demo"
+                }
+            ]
+        },
+        {
+            "id": "unity-roguelike-01",
+            "title": "Unity 像素地牢开发日志 #1 - 程序化地图生成",
+            "description": "独立游戏开发日志第一期，介绍如何用波函数坍缩算法（WFC）实现程序化关卡生成，保证每次游玩体验的唯一性。",
+            "platform": "bilibili",
+            "videoId": "BV2xx411c7mE",
+            "cover": "",
+            "duration": "45:00",
+            "date": "2026-01-15",
+            "tags": [
+                "Unity",
+                "游戏开发",
+                "C#"
+            ],
+            "timestamps": [
+                {
+                    "time": "00:00",
+                    "label": "什么是 Roguelike"
+                },
+                {
+                    "time": "05:00",
+                    "label": "WFC 算法原理"
+                },
+                {
+                    "time": "20:00",
+                    "label": "Unity 实现代码讲解"
+                },
+                {
+                    "time": "35:00",
+                    "label": "效果演示与调参"
+                }
+            ],
+            "relatedPost": "unity-indie-game-dev",
+            "resources": [
+                {
+                    "label": "WFC 算法源码",
+                    "url": "https://github.com/example/wfc-unity"
+                }
+            ]
+        }
+    ]
+}

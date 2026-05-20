@@ -1,0 +1,377 @@
+---
+title: "从零构建单页笔记本系统：原生 JavaScript SPA 架构设计与实践"
+date: "2026-05-20"
+description: "使用原生 JavaScript 构建一个完整的笔记管理系统，深入解析 SPA 架构设计、ES Module 模块化、JWT 认证流程、RESTful API 封装、事件管理 CRUD 以及模态框/分页/筛选等企业级前端模式。"
+tags: ["JavaScript", "SPA", "模块化", "RESTful API", "前端架构"]
+cover: "/images/posts/notebook-system-cover.svg"
+relatedProjects: ["notebook-system"]
+---
+
+# 从零构建单页笔记本系统
+
+在 Vue/React 大行其道的今天，很多人忘了**原生 JavaScript 同样可以构建完整的单页应用（SPA）**。本文记录我用纯原生 JS（ES Module）开发的一个笔记本管理系统——涵盖用户认证、事件管理、分类管理、分页筛选等完整功能。
+
+> 在线体验：[笔记本系统 Demo](/demos/notebook/)
+
+## 项目架构
+
+```
+NoteBook/
+├── index.html             # 登录/注册页面
+├── dashboard.html         # 主控制面板（SPA）
+├── css/
+│   ├── auth.css           # 登录页样式
+│   ├── dashboard.css      # 控制面板样式
+│   ├── modal.css          # 模态框样式
+│   └── style.css          # 全局样式
+└── js/
+    ├── api.js             # API 客户端（核心通信层）
+    ├── auth.js            # 认证逻辑（登录/注册）
+    ├── main.js            # 应用入口 + 路由 + 初始化
+    ├── event.js           # 事件管理模块（CRUD + 筛选 + 分页）
+    ├── category.js        # 分类管理模块（CRUD）
+    ├── storage.js         # 本地存储管理器
+    └── utils.js           # 工具函数（模态框/日期/认证检查）
+```
+
+### 模块依赖图
+
+```
+main.js (应用入口)
+  ├── api.js         ← 所有模块的数据通道
+  ├── event.js       ← 事件 CRUD / 搜索 / 筛选 / 分页
+  ├── category.js    ← 分类 CRUD
+  ├── storage.js     ← 静态工具类，无需实例化
+  └── utils.js       ← 纯函数导出
+
+auth.js (独立入口，登录页面使用)
+  ├── api.js
+  └── utils.js
+```
+
+每个模块都是独立的 ES Module 文件，通过 `import/export` 进行依赖管理。没有使用任何打包工具——现代浏览器已经原生支持 ES Module。
+
+## 一、API 客户端：统一的数据通信层
+
+`api.js` 是整个系统的通信中枢，所有 HTTP 请求都通过它发出：
+
+```javascript
+class ApiClient {
+    constructor() {
+        this.baseUrl = 'http://localhost:8080/api';
+        this.token = localStorage.getItem('token');
+    }
+
+    async request(method, endpoint, data = null) {
+        const headers = { 'Content-Type': 'application/json' };
+        if (this.token) {
+            headers['Authorization'] = `Bearer ${this.token}`;
+        }
+
+        const response = await fetch(`${this.baseUrl}${endpoint}`, {
+            method,
+            headers,
+            credentials: 'include',
+            body: data ? JSON.stringify(data) : null,
+        });
+
+        const result = await response.json();
+        if (!response.ok) throw new Error(result.message || '请求失败');
+        return result;
+    }
+}
+```
+
+### 设计亮点
+
+| 特性 | 实现 |
+| :--- | :--- |
+| Token 自动注入 | 构造时从 `localStorage` 读取，每次请求自动附带 |
+| 统一错误处理 | `response.ok` 检查 + 抛出业务错误 |
+| 语义化方法 | `api.getEvents()` / `api.createEvent()` 风格统一 |
+| Session 支持 | `credentials: 'include'` 兼容 Cookie 认证 |
+
+### RESTful 接口映射
+
+```javascript
+// 认证
+async register(user) { return this.request('POST', '/auth/register', user); }
+async login(credentials) { return this.request('POST', '/auth/login', credentials); }
+async logout() { return this.request('POST', '/auth/logout'); }
+
+// 事件 CRUD + 状态更新
+async getEvents(query) { return this.request('GET', `/events?${query}`); }
+async createEvent(event) { return this.request('POST', '/events', event); }
+async updateEvent(id, event) { return this.request('PUT', `/events/${id}`, event); }
+async deleteEvent(id) { return this.request('DELETE', `/events/${id}`); }
+async updateEventStatus(id, status) { return this.request('PATCH', `/events/${id}/status`, { status }); }
+
+// 分类 CRUD
+async getCategories() { return this.request('GET', '/categories'); }
+async createCategory(name) { return this.request('POST', '/categories', { name }); }
+```
+
+注意 `updateEventStatus` 使用了 `PATCH` 方法而非 `PUT`——这是 RESTful 最佳实践：部分更新用 PATCH，全量替换用 PUT。
+
+## 二、认证系统：JWT Token 流程
+
+### 登录页面
+
+`index.html` 包含登录和注册两个表单，通过标签页切换：
+
+```javascript
+// auth.js
+async function handleLogin() {
+    const username = document.getElementById('username').value.trim();
+    const password = document.getElementById('password').value.trim();
+
+    showLoading();
+    try {
+        const response = await api.login({ username, password });
+        localStorage.setItem('token', response.data.token);
+        localStorage.setItem('username', username);
+        window.location.href = 'dashboard.html';
+    } catch (error) {
+        showError(error.message || '登录失败');
+    } finally {
+        hideLoading();
+    }
+}
+```
+
+### 认证守卫
+
+进入 `dashboard.html` 时，立即检查 Token：
+
+```javascript
+// utils.js
+export function checkAuth() {
+    const token = localStorage.getItem('token');
+    if (!token && !window.location.pathname.endsWith('index.html')) {
+        window.location.href = 'index.html';
+    }
+}
+```
+
+`main.js` 在构造函数第一行就调用 `checkAuth()`，确保未登录用户无法访问控制面板。
+
+### 认证流程
+
+```
+用户登录 → POST /auth/login → 后端返回 JWT
+    → 存入 localStorage
+    → 每次请求自动附带 Authorization: Bearer <token>
+    → 退出登录 → POST /auth/logout → 清除 localStorage → 跳转登录页
+```
+
+## 三、事件管理器：企业级 CRUD 模式
+
+`event.js` 是整个系统最复杂的模块，实现了事件的完整生命周期管理：
+
+### 分页系统
+
+```javascript
+class EventManager {
+    constructor() {
+        this.currentPage = 1;
+        this.pageSize = 10;
+        this.totalEvents = 0;
+    }
+
+    // 翻页控制
+    bindEvents() {
+        this.prevPageBtn.addEventListener('click', () => {
+            if (this.currentPage > 1) {
+                this.currentPage--;
+                this.loadEvents();
+            }
+        });
+        this.nextPageBtn.addEventListener('click', () => {
+            if (this.currentPage * this.pageSize < this.totalEvents) {
+                this.currentPage++;
+                this.loadEvents();
+            }
+        });
+    }
+}
+```
+
+翻页逻辑的核心是**边界判断**：
+- 上一页：`currentPage > 1` 才允许翻页
+- 下一页：`currentPage * pageSize < totalEvents` 说明还有数据
+
+### 多维筛选
+
+```javascript
+async loadEvents() {
+    const query = {};
+    const categoryId = this.categoryFilter.value;
+    const status = this.statusFilter.value;
+    const startDate = this.startDateFilter.value;
+    const endDate = this.endDateFilter.value;
+    const keyword = this.eventSearch.value;
+
+    if (categoryId) query.categoryId = categoryId;
+    if (status) query.status = status;
+    if (startDate) query.startDate = startDate;
+    if (endDate) query.endDate = endDate;
+    if (keyword) query.keyword = keyword;
+    query.page = this.currentPage;
+    query.pageSize = this.pageSize;
+
+    const response = await api.getEvents(query);
+    this.totalEvents = response.data.total;
+    this.renderEvents(response.data.list);
+}
+```
+
+筛选条件通过 `URLSearchParams` 拼接为查询字符串，支持**任意组合**——分类 + 状态 + 日期范围 + 关键词可以同时生效。
+
+### 事件表单模态框
+
+创建/编辑事件使用同一个模态框表单，通过 `event-id` 隐藏域区分模式：
+
+```
+event-id 为空 → 新增模式 → POST /events
+event-id 有值 → 编辑模式 → PUT /events/:id
+```
+
+## 四、分类管理器：轻量级 CRUD
+
+`category.js` 结构与 `event.js` 类似，但更简洁——无筛选、无分页，只有基本的增删改查：
+
+```javascript
+async saveCategory() {
+    const id = this.categoryIdInput.value;
+    const name = this.categoryNameInput.value.trim();
+
+    if (id) {
+        await api.updateCategory(id, name);
+    } else {
+        await api.createCategory(name);
+    }
+    hideModal(this.categoryModal);
+    this.loadCategories();
+}
+```
+
+删除操作通过确认对话框防止误操作：
+
+```javascript
+// 删除时弹出确认框
+const deleteBtn = categoryRow.querySelector('.btn-delete');
+deleteBtn.addEventListener('click', () => {
+    showConfirm(`确定要删除分类"${category.name}"吗？`, async () => {
+        await api.deleteCategory(category.id);
+        this.loadCategories();
+    });
+});
+```
+
+## 五、StorageManager：本地存储封装
+
+为什么不用原生的 `localStorage` 直接操作？因为：
+
+1. **JSON 自动序列化/反序列化**：避免每次手动 `JSON.parse/stringify`
+2. **异常安全**：`try-catch` 包裹，避免隐私模式下的 `QuotaExceededError`
+3. **默认值支持**：`get(key, defaultValue)` 语义清晰
+4. **功能检测**：`isSupported()` 判断浏览器是否可用
+
+```javascript
+class StorageManager {
+    static set(key, value) {
+        localStorage.setItem(key, JSON.stringify(value));
+    }
+    static get(key, defaultValue = null) {
+        const value = localStorage.getItem(key);
+        return value !== null ? JSON.parse(value) : defaultValue;
+    }
+    static setUser(user) {
+        this.set('user', user);
+        this.set('token', user.token || '');
+    }
+}
+```
+
+> 注意：所有方法都是 `static`，意味着无需实例化，直接 `StorageManager.get('token')` 调用。
+
+## 六、工具函数模块
+
+`utils.js` 导出六个纯函数，供其他模块使用：
+
+| 函数 | 用途 |
+| :--- | :--- |
+| `showModal(el)` / `hideModal(el)` | 显隐模态框 + body 滚动控制 |
+| `showLoading()` / `hideLoading()` | 全局加载动画 |
+| `showConfirm(msg, cb)` | 确认对话框（事件代理防内存泄漏） |
+| `formatDate(str)` / `formatDateTime(str)` | 日期格式化 |
+| `checkAuth()` | Token 认证守卫 |
+| `initTabs()` | 标签页切换 |
+
+### 确认对话框的实现细节
+
+```javascript
+export function showConfirm(message, confirmCallback) {
+    // 克隆按钮节点来移除旧的事件监听器
+    const oldYes = confirmYes.cloneNode(true);
+    confirmYes.parentNode.replaceChild(oldYes, confirmYes);
+
+    // 重新绑定事件
+    document.getElementById('confirm-yes').addEventListener('click', () => {
+        hideModal(confirmModal);
+        confirmCallback();
+    });
+}
+```
+
+`cloneNode + replaceChild` 是原生 JS 中**移除所有事件监听器**最可靠的方法，避免多次打开确认框导致回调叠加执行。
+
+## 七、SPA 路由：侧边栏驱动
+
+整个 Dashboard 用单页模式运行，三个功能页（事件管理、分类管理、个人资料）通过侧边栏切换：
+
+```javascript
+// main.js
+initUI() {
+    const navItems = document.querySelectorAll('.sidebar-nav li');
+    const sections = document.querySelectorAll('.content-section');
+
+    navItems.forEach(item => {
+        item.addEventListener('click', () => {
+            // 移除所有激活状态
+            navItems.forEach(i => i.classList.remove('active'));
+            sections.forEach(s => s.classList.remove('active'));
+            // 激活当前
+            item.classList.add('active');
+            document.getElementById(`${item.dataset.section}-section`)
+                .classList.add('active');
+        });
+    });
+}
+```
+
+通过 `data-section` 属性实现视图关联：
+- `data-section="events"` → `#events-section` 
+- `data-section="categories"` → `#categories-section`
+
+## 设计模式总结
+
+| 模式 | 应用 |
+| :--- | :--- |
+| **单例模式** | `ApiClient` 导出唯一实例 `api` |
+| **静态工具类** | `StorageManager` 全部静态方法 |
+| **观察者模式** | DOM 事件监听实现组件通信 |
+| **策略模式** | `showConfirm` 通过回调注入不同行为 |
+| **ES Module** | 每个文件独立作用域，`import/export` 管理依赖 |
+
+## 项目亮点
+
+1. **零依赖 SPA**：不依赖 Vue/React，纯原生 JS 实现完整单页应用
+2. **RESTful 最佳实践**：GET/POST/PUT/PATCH/DELETE 语义清晰
+3. **企业级细节**：分页、筛选、模态框、确认对话框、加载动画、Token 守卫
+4. **模块化架构**：7 个 ES Module 文件，职责分明，依赖清晰
+5. **防御性编程**：`try-catch` 异常处理、空值判断、Token 过期守卫
+
+---
+
+> 完整源码见 `/NoteBook/` 目录，在线体验：[笔记本系统 Demo](/demos/notebook/)
