@@ -4,7 +4,7 @@ import createMDX from "@next/mdx";
 const nextConfig: NextConfig = {
   output: "export",
   trailingSlash: true,
-  allowedDevOrigins: ["192.168.31.251"],
+  allowedDevOrigins: ["192.168.31.251", "172.17.80.1"],
   pageExtensions: ["js", "jsx", "md", "mdx", "ts", "tsx"],
   images: {
     unoptimized: true,
