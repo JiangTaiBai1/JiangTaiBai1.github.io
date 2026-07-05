@@ -1,0 +1,220 @@
+---
+title: "SpringBoot 3.0 + Vue3 个人博客系统"
+description: "基于 Spring Boot 3 + Vue 3 前后端分离架构的全功能个人博客系统，涵盖用户认证、文章管理、评论互动、内容审核与管理后台。"
+category: "website"
+tags: ["Spring Boot", "Vue 3", "MyBatis-Plus", "Element Plus", "JWT", "MySQL", "全栈"]
+cover: "/images/projects/blog-cover.png"
+demoUrl: "https://blog.cloudyue.com.cn/"
+date: "2026-07-05"
+featured: true
+---
+
+## 项目简介
+
+这是一个基于 **Spring Boot 3 + Vue 3** 前后端分离架构的个人博客系统，提供了完整的博客功能——从用户注册登录、文章发布与管理，到分类管理、评论互动、内容审核，同时支持管理员对平台内容进行审核与统计分析。
+
+> 在线体验：[首页 - 个人博客](https://blog.cloudyue.com.cn/)
+
+## 核心功能
+
+### 用户系统
+
+- 注册、登录与个人资料管理
+- 基于 JWT 的无状态 Token 认证
+- Spring Security 角色权限控制（普通用户 / 管理员）
+
+### 文章管理
+
+- Markdown 编辑器，支持代码高亮
+- 分类与标签体系
+- 文章审核流程（待审核 → 通过 / 驳回 / 下架）
+- 置顶功能与多维度排序（最新、最热、浏览量）
+
+### 评论系统
+
+- 多级嵌套回复，树形结构展示
+- 评论点赞与举报机制
+- 管理员可处理举报（驳回或删除违规评论）
+
+### 管理后台
+
+- 内容审核：文章与评论的审核管理
+- 数据统计：用户数、文章数、评论数一览
+- 用户管理：角色分配与账号管理
+
+### 文件上传
+
+- 头像、封面图上传
+- 图片预览支持
+
+## 技术架构
+
+### 整体架构
+
+```
+┌──────────────────────────────────────────────────────┐
+│                    前端 (Vue 3 + Vite)                │
+│  ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌─────────┐ │
+│  │  首页展示  │ │ 文章详情  │ │ 写文章   │ │ 管理后台 │ │
+│  └──────────┘ └──────────┘ └──────────┘ └─────────┘ │
+│                       ↕  Axios / API                  │
+├──────────────────────────────────────────────────────┤
+│               后端 (Spring Boot 3)                    │
+│  ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌─────────┐ │
+│  │Controller│→│ Service  │→│  Mapper  │→│  MySQL  │ │
+│  └──────────┘ └──────────┘ └──────────┘ └─────────┘ │
+│       ↑                                               │
+│  ┌──────────┐ ┌──────────┐                           │
+│  │JWT Filter│ │Security  │                           │
+│  └──────────┘ └──────────┘                           │
+└──────────────────────────────────────────────────────┘
+```
+
+### 后端技术栈
+
+| 技术 | 版本 | 说明 |
+| :--- | :--- | :--- |
+| Spring Boot | 3.5.8 | 核心框架，自动配置与依赖注入 |
+| MyBatis-Plus | 3.5.7 | ORM 持久层框架，简化数据库操作 |
+| Spring Security | — | 安全认证与权限控制 |
+| JWT (jjwt) | 0.12.3 | 无状态 Token 认证方案 |
+| MySQL | 8.x | 关系型数据库 |
+| Swagger (OpenAPI 3) | — | API 接口文档 |
+| Lombok | — | 简化实体类代码 |
+
+### 前端技术栈
+
+| 技术 | 版本 | 说明 |
+| :--- | :--- | :--- |
+| Vue 3 | ^3.4.0 | 渐进式前端框架，组合式 API |
+| Vue Router 4 | ^4.2.5 | 路由管理，支持动态路由 |
+| Pinia | ^2.1.7 | 状态管理 |
+| Element Plus | ^2.5.1 | UI 组件库 |
+| Axios | ^1.6.2 | HTTP 请求库 |
+| Vite 5 | ^5.0.8 | 构建工具 |
+| markdown-it | ^14.0.0 | Markdown 渲染引擎 |
+| highlight.js | ^11.9.0 | 代码高亮 |
+
+## 项目亮点
+
+### 统一响应格式
+
+所有 API 返回统一的 `Result<T>` 结构，前端可统一拦截处理：
+
+```java
+@Data
+public class Result<T> {
+    private Integer code;
+    private String message;
+    private T data;
+
+    public static <T> Result<T> success(T data) { ... }
+    public static <T> Result<T> error(String message) { ... }
+}
+```
+
+### 全局异常处理
+
+通过 `@RestControllerAdvice` 统一捕获异常，包括参数校验异常和运行时异常，保证接口返回格式一致。
+
+### 自动填充与逻辑删除
+
+- MyBatis-Plus `MetaObjectHandler` 自动填充 `createTime` / `updateTime`
+- 全局逻辑删除配置，`deleted` 字段标记删除状态
+
+### 安全认证
+
+JWT Filter 拦截请求，Spring Security 配置无状态会话，公开接口（注册、登录、文章浏览）无需认证，写操作需登录。
+
+## 数据库设计
+
+### 核心表
+
+- **user** — 用户表：用户名、密码、昵称、头像、角色等
+- **article** — 文章表：标题、摘要、内容、封面、标签、浏览量、点赞数、审核状态等
+- **comment** — 评论表：支持 `parentId` 实现多级嵌套
+- **category** — 分类表
+
+### 设计要点
+
+- 所有表包含 `create_time`、`update_time`、`deleted` 字段
+- 合理建立索引（`user_id`、`category_id`、`create_time`）
+- 使用 `utf8mb4` 字符集支持 emoji 等特殊字符
+
+## 项目效果展示
+
+### 首页
+
+![首页展示](/images/projects/blog-main.png)
+
+- 响应式布局，适配不同屏幕尺寸
+- 文章卡片展示，支持分类筛选
+- 热门文章推荐，按浏览量排序
+
+### 文章详情页
+
+![文章详情](/images/projects/blog-article-details.png)
+
+- Markdown 内容渲染，支持代码高亮
+- 多级评论展示，支持回复互动
+- 文章点赞、分享功能
+
+### 管理后台
+
+![管理后台](/images/projects/blog-management.png)
+
+- 文章管理：发布、编辑、删除、审核
+- 评论管理：查看、删除、举报处理
+- 数据统计：用户数、文章数、评论数
+
+## 部署方式
+
+### 环境要求
+
+- JDK 17+
+- Node.js 18+
+- MySQL 8.0+
+- Maven 3.8+
+
+### 后端
+
+```bash
+# 配置数据库连接后启动
+mvn spring-boot:run
+```
+
+### 前端
+
+```bash
+npm install
+npm run dev      # 开发模式
+npm run build    # 生产构建
+```
+
+### 生产部署（Nginx 反向代理）
+
+```nginx
+server {
+    listen 80;
+    server_name your-domain.com;
+
+    location / {
+        root /path/to/dist;
+        try_files $uri $uri/ /index.html;
+    }
+
+    location /api {
+        proxy_pass http://localhost:8080;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+    }
+}
+```
+
+## 未来规划
+
+- **性能优化**：引入 Redis 缓存热点数据
+- **全文搜索**：集成 Elasticsearch
+- **社交功能**：关注、私信
+- **移动端**：微信小程序版本
+- **AI 集成**：接入大模型提供智能写作建议
