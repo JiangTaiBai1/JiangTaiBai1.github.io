@@ -1,0 +1,330 @@
+﻿---
+title: "React TodoList 待办事项清单实战教程"
+description: "使用 React 类组件从零实现待办事项清单应用，涵盖组件拆分、父子/祖孙通信、状态管理、事件处理及 TypeScript 类型限制等核心知识点。"
+category: "web"
+tags: ["React", "TypeScript", "组件通信", "状态管理", "类组件", "前端实战"]
+cover: "/images/projects/todorlist-cover.png"
+date: "2026-07-26"
+demoUrl: "[JiangTaiBai1/TodoList](https://github.com/JiangTaiBai1/TodoList)"
+featured: false
+---
+首先我们要实现一个待完成项清单的列表页面，效果如下所示：
+
+![image-20260726131607071](/images/projects/todoList/image-20260726131607071.png)
+
+![image-20260726131639173](/images/projects/todoList/image-20260726131639173.png)
+
+![image-20260726131747197](/images/projects/todoList/image-20260726131747197.png)
+
+第一步，我们要将页面拆分成几个组件；
+
+组件的拆分一定是要有一定的意义和逻辑，首先第一个重要的意义就是能够起到复用的作用，其次就是能够使代码的逻辑更加的具有可读性，并且每一个组件都是完成了一个专门的单一的功能。
+
+比如header就是专注搜索功能，list就是展示所有的待完成项，item则是起到鼠标悬停时产生的效果和删除功能，footer则实现数据计算和全选功能。
+
+![image-20260726131515673](/images/projects/todoList/image-20260726131515673.png)
+
+确定好要拆分的部分，就要写好静态页面，这个作为我们往下写的基础
+![image-20260726161350390](/images/projects/todoList/image-20260726161350390.png)
+
+
+
+
+将静态页面的代码，copy到app.jsx里面，然后注意id为“root”的标签，如果他有对应的样式，要将id改成其他的标识，不然会和react的跟结点的id相冲突。
+
+![image-20260726131341865](/images/projects/todoList/image-20260726131341865.png)
+
+最后每个拆分的组件对应到代码就可以这样（初步效果），将拆分好的组件进行折叠，折叠好的部分就是我们要替换成具体组件的地方
+
+![image-20260726161409921](/images/projects/todoList/image-20260726161409921.png)
+
+最后替换成组件
+
+![image-20260726161450404](/images/projects/todoList/image-20260726161450404.png)
+
+
+接着就要把被替换的代码挨个写到对应的组件里面去
+
+![image-20260726161501568](/images/projects/todoList/image-20260726161501568.png)
+![image-20260726131215948](/images/projects/todoList/image-20260726131215948.png)
+
+![image-20260726161509265](/images/projects/todoList/image-20260726161509265.png)
+
+![image-20260726131137201](/images/projects/todoList/image-20260726131137201.png)
+
+样式也要拆，不过这个过程过于繁琐，也没有太大的意义就不放图片了。
+
+接下来就要仔细完善各个组件：
+
+首先是在app.jsx里面初始化事项，并且初始化状态
+
+![image-20260726131048049](/images/projects/todoList/image-20260726131048049.png)
+
+但是光初始化没用，这些数据并没有加载到页面上
+
+![image-20260726161519175](/images/projects/todoList/image-20260726161519175.png)
+
+所以我们需要将app.jsx的数据传给子组件，也就是list，让list加载真实的数据。首先我们通过props将app.jsx的数据传到list组件，并且在list组件里接收父组件传递的数据。
+
+![image-20260726131005303](/images/projects/todoList/image-20260726131005303.png)
+
+注意这里要用map遍历我们的数组然后渲染到页面上，但到这一步还是不够，现在页面渲染的条数是根据app传递的数据个数来的，但是里面的数据还都是XXX，这是因为我们还要将里面的每一条数据传给item组件，让item组件渲染真实的信息。
+
+![image-20260726161528842](/images/projects/todoList/image-20260726161528842.png)
+
+
+所以我们在item组件里接收到list传递的todo数据，并通过插值语法渲染到页面上，
+
+![image-20260726161534594](/images/projects/todoList/image-20260726161534594.png)
+
+
+现在页面展示的数据就都是真实的数据了。在这里我们实现了一个小功能，那就是给“done”值为true的选项，自动勾选了已完成，并且仍然可以取消勾选。这里我们使用了defaultChecked，如果直接使用checked，自动勾选了之后就会再也不能取消勾选，通过插值语法，就能够使defaultChecked跟随事项的完成状态自动渲染完成效果。
+
+![image-20260726161542525](/images/projects/todoList/image-20260726161542525.png)
+
+# 实现添加待完成事项的功能。
+
+在这之前需要补充一下组件之间通信的知识：
+
+父传子：用props，就是我们之前看到的 todos={todos}的用法
+
+子传父：用props传递函数，详细步骤如下：
+
+# 第一步：创建一个函数
+
+在这里我创建了一个添加事项的add函数，接收的参数todo就是header组件将要传递过来的值（我这里是让header组件传递todo对象，并没有在父组件去补全对象的内容）
+
+![image-20260726161608558](/images/projects/todoList/image-20260726161608558.png)
+
+# 第二步：将这个函数用props的形式传递给header组件
+
+注意：千万不要讲setTodos 作为函数传递过去，setTodos 是替换式更新而不是合并式更新。如果子组件直接调用 setTodos(newItem) ，并且没有显式展开旧数组（[...prev, newItem]），直接setTodos（新添加的值），那么页面上的事项只有新添加的那个值，以前的值将全部丢失。虽然可以通过传递闭包函数解决，但这增加了子组件的逻辑复杂度。
+
+![image-20260726161618228](/images/projects/todoList/image-20260726161618228.png)
+
+# 第三步：创建新增值的函数，并在函数里面调用父组件传递的函数
+
+在header组件，我们需要给input添加一个键盘事件，这里可以用keydown也可以用keyUp还可以用keypress,区别仅在于触发函数的时间而已。
+
+按键按下：keydown，用户按下键盘上的键；
+
+按键释放：keyup，用户释放按键；
+
+点击按键：keypress，用户按下并且释放了按键。
+
+ 
+
+在handleKeyUp中，我们需要判断用户按下的键盘是哪个键并处理，其次要判断用户输入是否不为空，只有用户输入了值时，我们才将该事项添加到列表中，最后用this.props.addTodo来传递新的事项对象。
+
+这里有一个小点：
+
+1、crypto.randomUUID()，这个是现代浏览器和 Node.js 环境中内置的一个 Web Crypto API 方法，用于生成符合 RFC 4122 标准的 UUID v4（通用唯一识别码）。它的唯一性极高，是基于随机数生成的，相同的概率非常低（理论上需要生成数十亿个 UUID 才可能出现重复），非常适合用作前端列表的 key 或数据库主键。最终要的一点是，它不需要引入任何第三方库，非常方便。
+
+![image-20260726130732594](/images/projects/todoList/image-20260726130732594.png)
+
+最后成功实现添加功能
+
+![image-20260726130926030](/images/projects/todoList/image-20260726130926030.png)
+
+# 实现鼠标移到列表上会显示出按钮和阴影
+
+这里的话，我用的是css实现，比较简单，因为有个小点我想和大家说说。就是第15行的className。
+
+这的button因为是作为复用的组件，而button也会产生多个，那么这里我用了bth bth-danger的方式来作为classname，这有个好处就是把“长得像按钮”的通用特征（.btn）和“它是红色删除按钮”的个性特征（.btn-danger）拆分开来。
+
+比如：你还有“保存按钮”、“取消按钮”、“编辑按钮”，它们的大小、圆角、字体、鼠标指针样式都是一样的，只有颜色不同。
+
+如果不拆分，那么需要为每个按钮写一遍 padding, font-size, border-radius... 代码会非常冗余。
+
+拆分后：
+
+.btn 负责所有按钮的骨架（大小、形状、手感）。
+
+.btn-primary 负责蓝色。
+
+.btn-success 负责绿色。
+
+.btn-danger 负责红色。
+
+就很方便。
+
+![image-20260726130620779](/images/projects/todoList/image-20260726130620779.png)
+
+![image-20260726130606274](/images/projects/todoList/image-20260726130606274.png) 
+
+实现改变点击单选框时，更新对应事项的done的状态。
+
+# 第一步：获取点击事项的对应id和checked框的值
+
+在这里有一个小知识点，是自己摸索出来的
+
+每个DOM结点的事件绑定的函数，在挂载完成之后，函数里面的所有变量都会变成常量，所以DOM结点在页面上执行的函数都是确定好的。
+
+比如在list组件里面，我们按照todos来遍历渲染item，所以item里面的每一个li都其实是对应一个todo对象，只要挂在到浏览器上，那么li所对应的对象就不变，除非重新挂载。
+
+因此，li里面其实就已经有存在id，name，done等值了。听起来是不是感觉在说废话？继续往下看。
+
+![image-20260726161655555](/images/projects/todoList/image-20260726161655555.png)
+
+
+在item组件里面，list绑定了多个事件，里面的done和id，其实在现在看来是变量，但是我们实际上可以将它看做为常量。起初我不理解，为什么我点击checked框，handleCheck就能够获取到id呢？又没有使用document去获取结点，但是理解了上面的话之后，其实就很简单了，因为结点里面一直都有id，name，done这些值以及handleCheck函数，我们点击只不过是触发handleCheck而已，而函数也只不过是使用id的值而已。
+
+OK，理解了这块，相信大家对于闭包会更加的透彻。
+
+![image-20260726130455667](/images/projects/todoList/image-20260726130455667.png)
+
+# 第二步：祖孙之间的通信
+
+好，在上面我们就是简单的做了一个id和checked的传参，那么我们怎么将item的这些数据从list父组件一路传到app.jsx呢？
+
+这里又有一个祖孙通信的知识点。其实也很简单，就是你传给我，我传给他。
+
+下面这个图很好理解，app将更新函数传给list，list不用，直接传给item，然后item就能使用了。
+
+这里我还有一个小的理解，我们的组件最终是要全部放在app里面，那么item里面的变量对于list和app来说就是局部变量，那么app肯定不能够直接访问item的局部变量，同样，list也不能，对于外部要使用内部的局部变量，这种情况就可以使用闭包，通过函数一层层获取里面的局部变量，所以我们看到在item里面最终的函数其实也就是一个闭包函数。
+
+![image-20260726130421225](/images/projects/todoList/image-20260726130421225.png)
+
+# 第三步：实现数据更新
+
+最后我们在app组件里面实现对应的todo对象的数据更新就可以了，这里我用的是map函数，然后小知识点我也写在了注释里面，就是关于扩展运算符的一个用法。
+
+![image-20260726130354442](/images/projects/todoList/image-20260726130354442.png)
+
+![image-20260726130346122](/images/projects/todoList/image-20260726130346122.png)
+
+# 实现删除功能
+
+这里同样用到了祖孙通信，上面介绍过了，就不过多赘述。
+
+## 第一步：在app组件创建deleteTodo函数
+
+###### *（在这里我写的时候忘记截图的，这个截图的代码引入了**typescript**，大家可以去“添加限制**"**那一节先看看）*
+
+删除很简单，因为每一个li都有存自己对应的todo，每个todo都有一个唯一的id，因此我们只需要获取到id值就可以将这个todo删除，获取之后，我们用数组函数filter，过滤掉id等于我们要删除的todo的id，就可以了。注意，这里要创建一个新的变量去接收过滤后的数组，然后在用setTodos去更新数据。
+
+然后将这个函数作为参数，传递给list组件，同样，list组件不使用该函数，直接传递给item组件
+
+![image-20260726161734094](/images/projects/todoList/image-20260726161734094.png)
+
+
+![image-20260726161740202](/images/projects/todoList/image-20260726161740202.png)
+
+
+## 第二步：在item组件里取出props传的函数
+
+我们在button按钮中绑定一个click事件，并创建一个handleDelete用来处理点击事件，当删除按钮被点击，我们就弹出弹窗询问用户是否确定删除，如果是，就执行app传递的deleteTodo函数，如果取消那就什么也不发生。注意，这里一定要window.confirm，不然浏览器不知道这个confirm哪来的。
+
+注意：在这里我没用高阶函数柯里化，我利用了箭头函数来帮我调用handleDelete，这是上面通信函数需要传参时的另一种解法
+
+![image-20260726161753995](/images/projects/todoList/image-20260726161753995.png)
+
+# 实现footer
+
+# 第一步：在app组件创建全选/全不选的处理函数
+
+这里用到的是map函数，map函数专门对数组里面的每一项的进行加工处理的函数，我们接收一个参数checkDone（表示当前全选按钮的状态，是否被选中），如果checkDone为true，表示选中全选，那么我们把todos中的每一个事项的done都改为true，表示都已经完成，为false则相反。最后更新数据。
+
+创建好了之后就将该函数传递给footer组件。
+
+在这里我们还要把todos传递给footer，因为在footer中我们还要计算已完成的事项数量以及总的数量，所以要将todos传递给footer进行计算。
+
+![image-20260726161801468](/images/projects/todoList/image-20260726161801468.png)
+
+
+![image-20260726161812715](/images/projects/todoList/image-20260726161812715.png)
+# 第二步：接收app传递的参数
+
+我们在footer中接收app传递的checkAllTodo函数和todos数组。
+
+在checkbox中绑定checked状态和onchange事件（注意这两个通常要成对使用），checked的状态就根据doneCount（已完成的数量）是否等于total（事项总数）并且事项的总数要>0时，才可以被选中。
+
+在onchange中，我们绑定一个箭头函数，在箭头函数里面调用我们定义的handleChange，在handleChange里面直接调用app传递的checkAllTodo函数
+
+![image-20260726130047003](/images/projects/todoList/image-20260726130047003.png)
+
+最后，我们要把item组件中的defaultChecked,改成checked，就可以成功实现了。
+
+![image-20260726125859466](/images/projects/todoList/image-20260726125859466.png)
+
+给props添加限制
+
+目前我们的代码，所有变量或者方法等等都没有加任何限制，也就是说不管是子传父还是父传子，亦或者是函数调用，默认都是任何情况都接受，但是这样往往会在实际运行中出现大量问题。比如在传递的参数是null的情况下依旧执行null.方法(),或者是默认传递3个参数，但是实际上只传了2个参数，第3个参数就自动默认为undefined，那么就会导致页面渲染有问题，甚至白屏等等的危险。
+
+因此，我们需要给我们的代码添加上规范的限制，也就是代码规范化。在这里我用的是typescript，也可以用prop-types，我列一下它们的区别：
+
+
+
+
+| **特性**   | **prop-types (JS)**                 | **TypeScript (TS)**                                 |
+| ---------- | ----------------------------------- | --------------------------------------------------- |
+| 定义位置   | 通常在组件函数外部赋值              | 通常在组件函数外部定义  interface，或在内部内联定义 |
+| 必填/选填  | .isRequired 后缀表示必填            | 属性名后加 ? 表示选填，不加默认为必填               |
+| 字符串     | PropTypes.string                    | string (小写关键字)                                 |
+| 数字       | PropTypes.number                    | number (小写关键字)                                 |
+| 布尔值     | PropTypes.bool                      | boolean                                             |
+| 数组       | PropTypes.arrayOf(PropTypes.string) | string[] 或 Array<string>                           |
+| 对象       | PropTypes.shape({  ... })           | {  key: type }                                      |
+| 联合类型   | PropTypes.oneOfType([...])          | type \| otherType (如 string \| number)             |
+| 自定义验证 | 需要写一个返回  Error 的函数        | 直接使用 type 或 interface 组合                     |
+
+ 
+
+如果你要用prop-types的话就需要在控制台中执行下面的命令，将prop-types下载下来，这个体积很小下载也快，然后在用
+
+import PropTypes from 'prop-types'; 就可以了，详细的语法我就不介绍了，感兴趣的朋友可以去官网搜索一下[道具类型 - NPM](https://www.npmjs.com/package/prop-types)。不过近几年，prop-types很少被使用了。
+
+![image-20260726161825563](/images/projects/todoList/image-20260726161825563.png)
+
+好，下面说一下typescript在这个小案例的运用，以app组件和list组件为例。
+
+首先，我们要把jsx或者js的文件改成tsx（注意：不一定是全部都转哦，我在下面列了一些常用的转换情况）
+
+![image-20260726161835068](/images/projects/todoList/image-20260726161835068.png)
+
+## 建议转换：
+
+- API 请求封装 (api/user.js → api/user.ts)
+- 常量定义 (constants/index.js → constants/index.ts)
+- 工具函数 (utils/helper.js → utils/helper.ts)
+- Store/Context 定义 (store/index.js → store/index.ts)
+
+## 可以不转（保持 .js）：
+
+- 构建工具配置：vite.config.js, next.config.js (除非你启用     ESM + TS 配置)
+- 测试配置：jest.config.js
+- 简单的脚本文件
+
+然后先定义事项，再讲初始列表数据添加类型限制，设置为Todo数组，数组里面包含的只能是Todo对象。
+
+addTodo函数和UpdateTodo函数要对参数进行类型限制。注意：基本类型使用小写的 string, boolean, number
+
+![image-20260726124935047](/images/projects/todoList/image-20260726124935047.png)
+
+然后在list组件中，我们一定要给props做一个定义，props是一个对象，对象里面就是我们从其他组件接收的参数，要对每一个参数进行一个定义，注意：函数的定义是，函数名: (参数名: 参数类型, ...) => 返回值类型,其他的定义和前面说的一样。
+
+定义好props，我们就需要在component使用泛型：
+
+extends Component<ItemProps, {}>
+
+Component 是 React 提供的基类，它接受两个类型参数：
+
+第一个参数 <ItemProps>：定义 Props（属性） 的类型。
+
+这意味着：在这个组件内部，this.props 的类型被锁定为 ItemProps。
+
+好处：当输入 this.props. 时，VS Code 会自动提示 updateTodo、deleteTodo 和 todo。如果尝试访问不存在的属性（如 this.props.name），TS 会直接报错。
+
+第二个参数 <{}>：定义 State（状态） 的类型。
+
+{} 表示一个空对象，意味着这个组件没有内部状态（即不使用 this.state 或 this.setState）。
+
+如果组件有状态，比如 { count: number }，这里就会写成 Component<ItemProps, { count: number }>。
+
+![image-20260726124843925](/images/projects/todoList/image-20260726124843925.png)
+
+好，大概的限制部分都基本是这样，其他部分就根据具体情况按照typescript的语法规则来，这是typescript中文网站[规范 · 声明文件 · TypeScript中文网 · TypeScript——JavaScript的超集](https://www.tslang.cn/docs/handbook/declaration-files/do-s-and-don-ts.html)，大家可以仔细的去看一看，这里面还有一些常用配置的模版。
+
+ 
+
+到最后我们的这个小练习就成功结束啦！！！这个案例其实是很小很小的一个案例，但是我们全称自己手搓下来也是可以学习到很多东西的，总体写下来所花费的时间不长，但是可以快速的帮自己进行查漏补缺。最后这个案例的源代码我也会上传到git里面，欢迎大家一起跟练！！
