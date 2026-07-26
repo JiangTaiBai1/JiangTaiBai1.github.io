@@ -16,13 +16,20 @@
 # next.js
 /.next/
 /out/
-
-# production
 /build
+
+# next.js static export (GitHub Pages)
+/404.html
+/index.html
+/_next/
+/_not-found/
+/__next.*.txt
+/*.html
 
 # misc
 .DS_Store
 *.pem
+Thumbs.db
 
 # debug
 npm-debug.log*
@@ -39,3 +46,18 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# temp files
+image_refs.txt
+image_refs_full.txt
+temp_image_check.txt
+temp_image_refs.txt
+index.txt
+*.tmp
