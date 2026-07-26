@@ -256,23 +256,23 @@ OK，理解了这块，相信大家对于闭包会更加的透彻。
 
 
 
-| **特性**   | **prop-types (JS)**                 | **TypeScript (TS)**                                 |
-| ---------- | ----------------------------------- | --------------------------------------------------- |
-| 定义位置   | 通常在组件函数外部赋值              | 通常在组件函数外部定义  interface，或在内部内联定义 |
-| 必填/选填  | .isRequired 后缀表示必填            | 属性名后加 ? 表示选填，不加默认为必填               |
-| 字符串     | PropTypes.string                    | string (小写关键字)                                 |
-| 数字       | PropTypes.number                    | number (小写关键字)                                 |
-| 布尔值     | PropTypes.bool                      | boolean                                             |
-| 数组       | PropTypes.arrayOf(PropTypes.string) | string[] 或 Array<string>                           |
-| 对象       | PropTypes.shape({  ... })           | {  key: type }                                      |
-| 联合类型   | PropTypes.oneOfType([...])          | type \| otherType (如 string \| number)             |
-| 自定义验证 | 需要写一个返回  Error 的函数        | 直接使用 type 或 interface 组合                     |
+| **特性**   | **prop-types (JS)**                 | **TypeScript (TS)**                                      |
+| ---------- | ----------------------------------- | -------------------------------------------------------- |
+| 定义位置   | 通常在组件函数外部赋值              | 通常在组件函数外部定义 interface，或在内部内联定义        |
+| 必填/选填  | `.isRequired` 后缀表示必填          | 属性名后加 `?` 表示选填，不加默认为必填                   |
+| 字符串     | `PropTypes.string`                  | `string` (小写关键字)                                    |
+| 数字       | `PropTypes.number`                  | `number` (小写关键字)                                    |
+| 布尔值     | `PropTypes.bool`                    | `boolean`                                                |
+| 数组       | `PropTypes.arrayOf(PropTypes.string)` | `string[]` 或 `Array<string>`                          |
+| 对象       | `PropTypes.shape({ ... })`          | `{ key: type }`                                          |
+| 联合类型   | `PropTypes.oneOfType([...])`        | `type \| otherType` (如 `string \| number`)              |
+| 自定义验证 | 需要写一个返回 Error 的函数         | 直接使用 `type` 或 `interface` 组合                       |
 
  
 
 如果你要用prop-types的话就需要在控制台中执行下面的命令，将prop-types下载下来，这个体积很小下载也快，然后在用
 
-import PropTypes from 'prop-types'; 就可以了，详细的语法我就不介绍了，感兴趣的朋友可以去官网搜索一下[道具类型 - NPM](https://www.npmjs.com/package/prop-types)。不过近几年，prop-types很少被使用了。
+`import PropTypes from 'prop-types';` 就可以了，详细的语法我就不介绍了，感兴趣的朋友可以去官网搜索一下[道具类型 - NPM](https://www.npmjs.com/package/prop-types)。不过近几年，prop-types很少被使用了。
 
 ![image-20260726161825563](/images/projects/todoList/image-20260726161825563.png)
 
@@ -305,21 +305,21 @@ addTodo函数和UpdateTodo函数要对参数进行类型限制。注意：基本
 
 定义好props，我们就需要在component使用泛型：
 
-extends Component<ItemProps, {}>
+`extends Component<ItemProps, {}>`
 
 Component 是 React 提供的基类，它接受两个类型参数：
 
-第一个参数 <ItemProps>：定义 Props（属性） 的类型。
+第一个参数 `<ItemProps>`：定义 Props（属性） 的类型。
 
 这意味着：在这个组件内部，this.props 的类型被锁定为 ItemProps。
 
 好处：当输入 this.props. 时，VS Code 会自动提示 updateTodo、deleteTodo 和 todo。如果尝试访问不存在的属性（如 this.props.name），TS 会直接报错。
 
-第二个参数 <{}>：定义 State（状态） 的类型。
+第二个参数 `<{}>`：定义 State（状态） 的类型。
 
-{} 表示一个空对象，意味着这个组件没有内部状态（即不使用 this.state 或 this.setState）。
+`{}` 表示一个空对象，意味着这个组件没有内部状态（即不使用 this.state 或 this.setState）。
 
-如果组件有状态，比如 { count: number }，这里就会写成 Component<ItemProps, { count: number }>。
+如果组件有状态，比如 `{ count: number }`，这里就会写成 `Component<ItemProps, { count: number }>`。
 
 ![image-20260726124843925](/images/projects/todoList/image-20260726124843925.png)
 
